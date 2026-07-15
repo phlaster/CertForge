@@ -701,19 +701,19 @@ input:checked+.slider:before {
 .qr-wrap::after {
     content: "Click to set link";
     position: absolute;
-    top: 100%;
+    top: -35%;
     left: 50%;
     transform: translateX(-50%);
     margin-top: 4px;
     background: var(--text-primary);
     color: var(--bg-cert);
     padding: 4px 8px;
-    font-size: 8px;
+    font-size: 15px;
     border-radius: 4px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
     z-index: 10;
 }
 
