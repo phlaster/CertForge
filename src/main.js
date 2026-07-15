@@ -418,16 +418,8 @@ paintingImg.addEventListener('error', hideImage);
 if (paintingImg.complete && paintingImg.naturalWidth > 0) {
     showImage();
 } else {
-    fetch('https://picsum.photos/450/300')
-        .then(res => res.blob())
-        .then(blob => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                paintingImg.src = reader.result;
-            };
-            reader.readAsDataURL(blob);
-        })
-        .catch(() => hideImage());
+    paintingImg.crossOrigin = "anonymous";
+    paintingImg.src = `https://picsum.photos/seed/${Math.floor(Math.random() * 10000)}/450/300`;
 }
 
 // ============================================================
