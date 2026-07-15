@@ -508,14 +508,17 @@ function waitForQR() {
 }
 
 async function exportPDF() {
-    const html2pdf = (await import('html2pdf.js')).default;
     const btn = document.getElementById('exportBtn');
     const btnLabel = btn.querySelector('span');
     const original = btnLabel.textContent;
 
     btn.disabled = true;
+    btnLabel.textContent = 'Loading…';
+
+    // Dynamically load the library
+    const html2pdf = (await import('html2pdf.js')).default;
+
     btnLabel.textContent = 'Preparing…';
-    btn.style.visibility = 'hidden';
 
     const liveImagePlaceholder = document.getElementById('imagePlaceholder');
     const originalPlaceholderText = liveImagePlaceholder ? liveImagePlaceholder.textContent : '';
@@ -618,17 +621,16 @@ async function exportPDF() {
                 logging: false,
                 width: certWidth,
                 height: certHeight,
-                windowWidth: certWidth, // Force exact window size to prevent responsive scaling
+                windowWidth: certWidth,
                 windowHeight: certHeight,
-                x: 0, // Force exact top-left crop coordinates 
+                x: 0,
                 y: 0,
-                scrollX: 0, // Nullify scroll offsets
+                scrollX: 0,
                 scrollY: 0,
                 onclone: function(clonedDoc) {
                     const clonedHtml = clonedDoc.documentElement;
                     const clonedBody = clonedDoc.body;
 
-                    // Apply identical locked sizing to the cloned document
                     clonedHtml.style.width = certWidth + 'px';
                     clonedHtml.style.height = certHeight + 'px';
                     clonedHtml.style.margin = '0';
@@ -652,18 +654,15 @@ async function exportPDF() {
                         clonedCert.style.backgroundColor = bgColor;
                     }
 
-                    // Remove editing UI styles
                     clonedDoc.querySelectorAll('[contenteditable="true"]').forEach(el => {
                         el.style.backgroundColor = 'transparent';
                         el.style.boxShadow = 'none';
                     });
 
-                    // Make all default placeholder text render with solid proper color (opacity 1)
                     clonedDoc.querySelectorAll('.placeholder-text').forEach(el => {
                         el.style.opacity = '1';
                     });
 
-                    // Force solid colors to bypass html2canvas CSS variable parsing issues
                     clonedDoc.querySelectorAll('.cert-header h1').forEach(el => el.style.color = primaryColor);
                     clonedDoc.querySelectorAll('.eyebrow').forEach(el => el.style.color = mutedColor);
                     clonedDoc.querySelectorAll('.painting-title').forEach(el => el.style.color = primaryColor);
@@ -688,30 +687,26 @@ async function exportPDF() {
                     clonedDoc.querySelectorAll('.arch').forEach(el => el.style.borderColor = frameMidColor);
                     clonedDoc.querySelectorAll('.dot').forEach(el => el.style.backgroundColor = frameMidColor);
 
-                    // Handle the Artist name: completely hide from PDF if empty
                     const clonedByLines = clonedDoc.querySelectorAll('.by-line');
                     clonedByLines.forEach(clonedByLine => {
                         const clonedArtist = clonedByLine.querySelector('.artist');
                         const clonedByWord = clonedByLine.querySelector('.by-word');
 
-                        let isEmpty = true; // Assume empty by default
+                        let isEmpty = true;
 
                         if (clonedArtist) {
                             const isPlaceholder = clonedArtist.classList.contains('placeholder-text');
                             const currentText = (clonedArtist.innerText || '').trim();
                             const placeholderText = clonedArtist.getAttribute('data-placeholder') || '';
 
-                            // If it has real text (not empty, not placeholder, and doesn't have placeholder class)
                             if (!isPlaceholder && currentText !== '' && currentText !== placeholderText) {
                                 isEmpty = false;
                             }
                         }
 
                         if (isEmpty) {
-                            // Using display: none is much more reliable in html2canvas than .remove()
                             clonedByLine.style.display = 'none';
                         } else {
-                            // Filled -> make sure it's fully solid
                             clonedByLine.classList.remove('empty-artist');
                             if (clonedByWord) clonedByWord.style.opacity = '1';
                             if (clonedArtist) {
@@ -721,15 +716,12 @@ async function exportPDF() {
                         }
                     });
 
-                    // Sanitize all images to prevent html2canvas fetch errors
-                    // This removes any <img> with an empty or missing src (which defaults to the page URL)
                     clonedDoc.querySelectorAll('img').forEach(el => {
                         if (!el.getAttribute('src') || el.src === window.location.href) {
                             el.remove();
                         }
                     });
 
-                    // Explicitly remove the painting image if it's hidden or missing a valid src
                     const clonedPaintingImg = clonedDoc.getElementById('paintingImg');
                     if (clonedPaintingImg) {
                         const hasValidSrc = clonedPaintingImg.getAttribute('src') && clonedPaintingImg.src !== window.location.href;
@@ -738,10 +730,8 @@ async function exportPDF() {
                         }
                     }
 
-                    // Force update the placeholder text for PDF export
                     const clonedImagePlaceholder = clonedDoc.getElementById('imagePlaceholder');
                     if (clonedImagePlaceholder) {
-                        // Using all three properties guarantees the text node updates for html2canvas
                         clonedImagePlaceholder.innerHTML = 'Place for image';
                         clonedImagePlaceholder.innerText = 'Place for image';
                         clonedImagePlaceholder.textContent = 'Place for image';
@@ -767,7 +757,6 @@ async function exportPDF() {
         console.error('PDF export failed:', err);
         alert('PDF export failed: ' + err.message);
     } finally {
-        // 3. Restore all original styles
         html.style.width = originalHtmlStyle.width;
         html.style.height = originalHtmlStyle.height;
         html.style.margin = originalHtmlStyle.margin;
@@ -786,7 +775,6 @@ async function exportPDF() {
         cert.style.transform = originalCertStyle.transform;
         cert.style.boxShadow = originalCertStyle.boxShadow;
 
-        // Unwrap QR code from hyperlink
         if (qrLinkWrapper && qrWrapEl) {
             qrLinkWrapper.parentNode.insertBefore(qrWrapEl, qrLinkWrapper);
             qrLinkWrapper.remove();
@@ -796,7 +784,6 @@ async function exportPDF() {
             liveImagePlaceholder.textContent = originalPlaceholderText;
         }
 
-        btn.style.visibility = 'visible';
         btn.disabled = false;
         btnLabel.textContent = original;
     }
