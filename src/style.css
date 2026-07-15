@@ -599,7 +599,7 @@ input:checked+.slider:before {
 .meta-row {
     display: grid;
     grid-template-columns: 6mm 42mm 1fr;
-    align-items: baseline;
+    align-items: center;
     padding: 3mm 0;
     border-bottom: 0.5px solid rgba(196, 167, 125, 0.55);
 }
@@ -644,7 +644,7 @@ input:checked+.slider:before {
     font-size: 18px;
     color: var(--text-primary);
     font-style: italic;
-    padding-left: 10mm;
+    padding-left: 15mm;
     transition: color 0.5s ease;
 }
 
