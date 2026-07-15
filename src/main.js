@@ -417,10 +417,8 @@ paintingImg.addEventListener('error', hideImage);
 
 if (paintingImg.complete && paintingImg.naturalWidth > 0) {
     showImage();
-} else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
-    hideImage();
 } else {
-    hideImage();
+   paintingImg.src = 'https://picsum.photos/450/300';
 }
 
 // ============================================================
@@ -660,7 +658,7 @@ async function exportPDF() {
                     });
 
                     clonedDoc.querySelectorAll('.placeholder-text').forEach(el => {
-                        el.style.opacity = '1';
+                        el.innerText = '';
                     });
 
                     clonedDoc.querySelectorAll('.cert-header h1').forEach(el => el.style.color = primaryColor);
@@ -741,7 +739,21 @@ async function exportPDF() {
                     if (overlay) overlay.style.display = 'none';
 
                     clonedDoc.querySelectorAll('.meta-delete-btn, .meta-add-btn, .clear-image-btn').forEach(el => el.style.display = 'none');
-                    clonedDoc.querySelectorAll('.meta-row').forEach(el => el.style.gridTemplateColumns = '42mm 1fr');
+                    clonedDoc.querySelectorAll('.meta-row').forEach(row => {
+                        const dt = row.querySelector('dt');
+                        const dd = row.querySelector('dd');
+                        if (dt && dt.classList.contains('placeholder-text') && dd && dd.classList.contains('placeholder-text')) {
+                            row.style.display = 'none';
+                        } else {
+                            row.style.gridTemplateColumns = '42mm 1fr';
+                        }
+                    });
+                    clonedDoc.querySelectorAll('.sign-field').forEach(field => {
+                        const label = field.querySelector('.sign-label');
+                        if (label && label.classList.contains('placeholder-text')) {
+                            field.style.display = 'none';
+                        }
+                    });
                 }
             },
             jsPDF: {

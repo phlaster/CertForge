@@ -974,11 +974,14 @@ input:checked+.slider:before {
 }
 
 /* ─── Placeholder Text Styling ──────────────────────────── */
-.by-line .artist.placeholder-text {
+.placeholder-text {
+    opacity: 0.5;
     color: var(--text-muted);
-    font-weight: 400;
     font-style: italic;
-    opacity: 0.55;
+}
+
+.by-line .artist.placeholder-text {
+    font-weight: 400;
 }
 
 /* ─── Editable Fields Styling ───────────────────────────── */

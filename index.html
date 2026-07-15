@@ -87,7 +87,7 @@
                     </div>
                     <div class="orn-line"></div>
                 </div>
-                <h1 contenteditable="true" spellcheck="false" data-placeholder="Fine Art Authenticity Certificate"></h1>
+                <h1 contenteditable="true" spellcheck="false" data-placeholder="Authenticity Certificate">Fine Art Authenticity Certificate</h1>
                 <div class="header-divider">
                     <span class="line"></span>
                     <span class="diamond"></span>
@@ -98,28 +98,27 @@
             <main class="cert-body">
 
                 <div class="info-top">
-                    <p class="eyebrow" contenteditable="true" spellcheck="false" data-placeholder="This is to certify the authenticity of"></p>
-                    <h2 class="painting-title" contenteditable="true" spellcheck="false" data-placeholder="Artwork name"></h2>
-                    <p class="by-line"><span class="by-word">by </span><span class="artist" contenteditable="true" spellcheck="false" data-placeholder="Artist name"></span></p>
+                    <p class="eyebrow" contenteditable="true" spellcheck="false" data-placeholder="This is to certify the authenticity of">This is to certify the authenticity of</p>
+                    <h2 class="painting-title" contenteditable="true" spellcheck="false" data-placeholder="Artwork name">Artwork name</h2>
+                    <p class="by-line"><span class="by-word">by </span><span class="artist" contenteditable="true" spellcheck="false" data-placeholder="Artist name">Artist name</span></p>
                 </div>
 
                 <div class="meta-container">
                     <dl class="meta-list" id="metaList">
                         <div class="meta-row">
-                            <!-- Removed onclick -->
                             <button class="meta-delete-btn" data-action="delete-meta">×</button>
-                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
-                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail">Year</dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value">2026</dd>
                         </div>
                         <div class="meta-row">
                             <button class="meta-delete-btn" data-action="delete-meta">×</button>
-                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
-                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail">Technique</dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value">pixels, screen</dd>
                         </div>
                         <div class="meta-row">
                             <button class="meta-delete-btn" data-action="delete-meta">×</button>
-                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
-                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail">Dimensions</dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value">300 × 450 px</dd>
                         </div>
                     </dl>
                     <button class="meta-add-btn" id="metaAddBtn" data-action="add-meta">+ Add detail</button>
@@ -130,17 +129,17 @@
                         <div class="qr-wrap" id="qrWrap" data-action="open-qr">
                             <div id="qrcode"></div>
                         </div>
-                        <span class="qr-label" contenteditable="true" spellcheck="false" data-placeholder="Social"></span>
+                        <span class="qr-label" contenteditable="true" spellcheck="false" data-placeholder="Social">Social</span>
                     </div>
 
                     <div class="signatures">
                         <div class="sign-field">
                             <div class="sign-line"></div>
-                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Artist's signature"></p>
+                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Signature">Artist's signature</p>
                         </div>
                         <div class="sign-field">
                             <div class="sign-line"></div>
-                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Date signed"></p>
+                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Date">Date signed</p>
                         </div>
                     </div>
                 </div>
@@ -156,7 +155,7 @@
                         </div>
                         <button class="clear-image-btn" id="clearImageBtn" data-action="clear-image" title="Remove image">×</button>
                     </div>
-                    <p class="image-caption" id="imageCaption" contenteditable="true" spellcheck="false" data-placeholder="— The certified work —"></p>
+                    <p class="image-caption" id="imageCaption" contenteditable="true" spellcheck="false" data-placeholder="— The certified work —">— The certified work —</p>
                 </div>
 
             </main>
@@ -166,9 +165,8 @@
     <div class="qr-modal-overlay" id="qrModalOverlay">
         <div class="qr-modal">
             <h3>Set QR Code Link</h3>
-            <input type="text" id="qrUrlInput" placeholder="Enter full URL (https://...)">
+            <input type="text" id="qrUrlInput" placeholder="https://www.example.com">
             <div class="qr-modal-actions">
-                <!-- Removed onclick -->
                 <button class="qr-modal-btn btn-cancel" data-action="close-qr">Cancel</button>
                 <button class="qr-modal-btn btn-save" data-action="save-qr">Save</button>
             </div>
