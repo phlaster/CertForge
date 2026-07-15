@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-page: #e3dccb;
-            --bg-cert: #f7f1e3;
-            --bg-cert-warm: #f1e7d2;
-            --frame-dark: #6b5d4a;
-            --frame-mid: #8b7355;
-            --frame-light: #c4a77d;
+            --bg-page: #d8d8d8;
+            --bg-cert: #f0f0f0;
+            --bg-cert-warm: #e5e5e5;
+            --frame-dark: #4a4a4a;
+            --frame-mid: #6e6e6e;
+            --frame-light: #a8a8a8;
             --accent-sage: #7d8b6f;
-            --text-primary: #3d342a;
-            --text-secondary: #5a4a3a;
-            --text-muted: #8b7355;
-            --paper-shadow: rgba(61, 52, 42, 0.18);
-            --edit-hover: rgba(196, 167, 125, 0.15);
-            --edit-focus: rgba(196, 167, 125, 0.25);
+            --text-primary: #2a2a2a;
+            --text-secondary: #404040;
+            --text-muted: #6e6e6e;
+            --paper-shadow: rgba(42, 42, 42, 0.18);
+            --edit-hover: rgba(110, 110, 110, 0.15);
+            --edit-focus: rgba(110, 110, 110, 0.25);
         }
 
         * {
@@ -222,6 +222,7 @@
             mix-blend-mode: multiply;
             z-index: 1;
             transition: opacity 0.4s ease;
+            background-size: 100% 100%; /* Stretches texture to prevent tiling edges */
         }
 
         .certificate.no-texture .paper-texture {
@@ -554,7 +555,7 @@
             font-size: 22px;
             color: var(--text-secondary);
             font-style: italic;
-            transition: color 0.5s ease;
+            transition: color 0.5s ease, opacity 0.3s ease;
         }
 
         .by-word {
@@ -562,14 +563,7 @@
         }
 
         .by-line.empty-artist .by-word {
-            opacity: 0.25;
-        }
-
-        .by-line.empty-artist .artist::before {
-            content: "Artist name";
-            color: var(--text-muted);
-            opacity: 0.6;
-            font-style: italic;
+            display: none;
         }
 
         .by-line .artist {
@@ -870,6 +864,15 @@
             opacity: 1;
         }
 
+        .image-frame:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .image-frame.empty .upload-overlay {
+            background: rgba(0, 0, 0, 0.12);
+            color: transparent;
+        }
+
         /* ─── Placeholder Text Styling ──────────────────────────── */
         .placeholder-text {
             opacity: 0.4;
@@ -1052,12 +1055,12 @@
     <div class="top-bar">
         <div class="controls-wrapper">
             <div class="palette-picker">
-                <button class="swatch active" data-palette="1" style="background: #e3dccb;" title="Classic Sepia"></button>
-                <button class="swatch" data-palette="2" style="background: #d8e0d3;" title="Sage Green"></button>
-                <button class="swatch" data-palette="3" style="background: #e6d4d6;" title="Dusty Rose"></button>
-                <button class="swatch" data-palette="4" style="background: #d4d8e0;" title="Slate Blue"></button>
-                <button class="swatch" data-palette="5" style="background: #dfd8e8;" title="Lavender Blush"></button>
-                <button class="swatch" data-palette="6" style="background: #e6dfc8;" title="Golden Ochre"></button>
+                <button class="swatch active" data-palette="1" style="background: #d8d8d8;" title="Slate Grey"></button>
+                <button class="swatch" data-palette="2" style="background: #e3dccb;" title="Classic Sepia"></button>
+                <button class="swatch" data-palette="3" style="background: #d8e0d3;" title="Sage Green"></button>
+                <button class="swatch" data-palette="4" style="background: #e6d4d6;" title="Dusty Rose"></button>
+                <button class="swatch" data-palette="5" style="background: #d4d8e0;" title="Slate Blue"></button>
+                <button class="swatch" data-palette="6" style="background: #dfd8e8;" title="Lavender Blush"></button>
                 <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
                 <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
             </div>
@@ -1170,11 +1173,11 @@
                     <div class="signatures">
                         <div class="sign-field">
                             <div class="sign-line"></div>
-                            <p class="sign-label">Artist's signature</p>
+                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Artist's signature"></p>
                         </div>
                         <div class="sign-field">
                             <div class="sign-line"></div>
-                            <p class="sign-label">Date signed</p>
+                            <p class="sign-label" contenteditable="true" spellcheck="false" data-placeholder="Date signed"></p>
                         </div>
                     </div>
                 </div>
@@ -1182,8 +1185,8 @@
                 <div class="image-container">
                     <div class="image-frame empty" id="imageFrame">
                         <input type="file" id="fileInput" accept="image/*" hidden>
-                        <span class="image-placeholder" id="imagePlaceholder">The certified painting</span>
-                        <img src="" alt="The certified painting" id="paintingImg" style="display: none;">
+                        <span class="image-placeholder" id="imagePlaceholder">Click to replace image</span>
+                        <img alt="The certified painting" id="paintingImg" style="display: none;">
                         <div class="upload-overlay">Click to replace image</div>
                     </div>
                     <p class="image-caption" id="imageCaption" contenteditable="true" spellcheck="false" data-placeholder="— The certified work —"></p>
@@ -1222,28 +1225,59 @@
         }
 
         function generatePaperTexture() {
+            const size = 1024; // High resolution
             const noiseCanvas = document.createElement('canvas');
-            noiseCanvas.width = 200;
-            noiseCanvas.height = 200;
+            noiseCanvas.width = size;
+            noiseCanvas.height = size;
             const ctx = noiseCanvas.getContext('2d');
-            const imageData = ctx.createImageData(200, 200);
-            const data = imageData.data;
-
+            
             const color = getComputedStyle(document.documentElement).getPropertyValue('--frame-mid').trim();
-            const rgb = hexToRgb(color) || {
-                r: 107,
-                g: 92,
-                b: 74
-            };
+            const rgb = hexToRgb(color) || { r: 107, g: 92, b: 74 };
 
-            for (let i = 0; i < data.length; i += 4) {
-                const val = Math.random();
-                data[i] = rgb.r;
-                data[i + 1] = rgb.g;
-                data[i + 2] = rgb.b;
-                data[i + 3] = val * 102;
+            ctx.clearRect(0, 0, size, size);
+            
+            // Enable browser's bilinear interpolation to smooth out the noise naturally
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Apply a slight blur to all layers to ensure it looks like soft paper grain
+            ctx.filter = 'blur(1.5px)';
+
+            // Vary octaves on each switch (3 to 5 layers of detail)
+            const octaves = 1 + Math.floor(Math.random() * 5); 
+            const baseFreq = 100; // Starting frequency
+
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+
+            for (let o = 0; o < octaves; o++) {
+                // Double the frequency (detail) for each octave
+                const freq = baseFreq * Math.pow(2, o);
+                tempCanvas.width = freq;
+                tempCanvas.height = freq;
+                
+                const imgData = tempCtx.createImageData(freq, freq);
+                const d = imgData.data;
+                
+                const octaveAlpha = 0.2; //(0.5 / octaves) * (1 - (0.1 * o)); // Higher frequencies get slightly less opacity so the fine grain doesn't overpower
+
+                // Generate pure random pixel noise at this frequency
+                for (let i = 0; i < d.length; i += 4) {
+                    const val = Math.random();
+                    d[i] = rgb.r;
+                    d[i + 1] = rgb.g;
+                    d[i + 2] = rgb.b;
+                    d[i + 3] = val * 255 * octaveAlpha;
+                }
+                tempCtx.putImageData(imgData, 0, 0);
+
+                // Draw the small noise canvas onto the 1024px main canvas.
+                // The browser interpolates and smooths it automatically, removing all blocky edges.
+                ctx.drawImage(tempCanvas, 0, 0, freq, freq, 0, 0, size, size);
             }
-            ctx.putImageData(imageData, 0, 0);
+
+            // Reset filter
+            ctx.filter = 'none';
 
             const textureDiv = document.getElementById('paperTexture');
             textureDiv.style.backgroundImage = `url(${noiseCanvas.toDataURL()})`;
@@ -1269,6 +1303,19 @@
         // ============================================================
         const palettes = {
             1: {
+                '--bg-page': '#d8d8d8',
+                '--bg-cert': '#f0f0f0',
+                '--bg-cert-warm': '#e5e5e5',
+                '--frame-dark': '#4a4a4a',
+                '--frame-mid': '#6e6e6e',
+                '--frame-light': '#a8a8a8',
+                '--text-primary': '#2a2a2a',
+                '--text-secondary': '#404040',
+                '--text-muted': '#6e6e6e',
+                '--edit-hover': 'rgba(110, 110, 110, 0.15)',
+                '--edit-focus': 'rgba(110, 110, 110, 0.25)'
+            },
+            2: {
                 '--bg-page': '#e3dccb',
                 '--bg-cert': '#f7f1e3',
                 '--bg-cert-warm': '#f1e7d2',
@@ -1281,7 +1328,7 @@
                 '--edit-hover': 'rgba(196, 167, 125, 0.15)',
                 '--edit-focus': 'rgba(196, 167, 125, 0.25)'
             },
-            2: {
+            3: {
                 '--bg-page': '#d8e0d3',
                 '--bg-cert': '#f2f6ef',
                 '--bg-cert-warm': '#e4ede0',
@@ -1294,7 +1341,7 @@
                 '--edit-hover': 'rgba(111, 139, 106, 0.15)',
                 '--edit-focus': 'rgba(111, 139, 106, 0.25)'
             },
-            3: {
+            4: {
                 '--bg-page': '#e6d4d6',
                 '--bg-cert': '#f9f0f1',
                 '--bg-cert-warm': '#f0dde0',
@@ -1307,7 +1354,7 @@
                 '--edit-hover': 'rgba(168, 120, 130, 0.15)',
                 '--edit-focus': 'rgba(168, 120, 130, 0.25)'
             },
-            4: {
+            5: {
                 '--bg-page': '#d4d8e0',
                 '--bg-cert': '#eef0f6',
                 '--bg-cert-warm': '#e0e3ec',
@@ -1320,7 +1367,7 @@
                 '--edit-hover': 'rgba(106, 117, 145, 0.15)',
                 '--edit-focus': 'rgba(106, 117, 145, 0.25)'
             },
-            5: {
+            6: {
                 '--bg-page': '#dfd8e8',
                 '--bg-cert': '#f5f1fa',
                 '--bg-cert-warm': '#ebe3f2',
@@ -1332,19 +1379,6 @@
                 '--text-muted': '#8270a0',
                 '--edit-hover': 'rgba(130, 112, 160, 0.15)',
                 '--edit-focus': 'rgba(130, 112, 160, 0.25)'
-            },
-            6: {
-                '--bg-page': '#e6dfc8',
-                '--bg-cert': '#f8f4e6',
-                '--bg-cert-warm': '#efe9d4',
-                '--frame-dark': '#6e623a',
-                '--frame-mid': '#9b8a52',
-                '--frame-light': '#cab98c',
-                '--text-primary': '#3f3a20',
-                '--text-secondary': '#5e5430',
-                '--text-muted': '#9b8a52',
-                '--edit-hover': 'rgba(155, 138, 82, 0.15)',
-                '--edit-focus': 'rgba(155, 138, 82, 0.25)'
             },
             7: {
                 '--bg-page': '#e5d6cc',
@@ -1602,15 +1636,13 @@
         // ============================================================
         function waitForImage(img) {
             return new Promise(resolve => {
-                if (img.complete && img.naturalWidth > 0) resolve();
-                else if (img.complete && img.naturalWidth === 0) resolve();
-                else {
-                    img.addEventListener('load', resolve, {
-                        once: true
-                    });
-                    img.addEventListener('error', resolve, {
-                        once: true
-                    });
+                if (!img.src || img.style.display === 'none' || (img.complete && img.naturalWidth === 0)) {
+                    resolve();
+                } else if (img.complete && img.naturalWidth > 0) {
+                    resolve();
+                } else {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
                 }
             });
         }
@@ -1783,24 +1815,34 @@
                             clonedDoc.querySelectorAll('.header-divider .line').forEach(el => el.style.backgroundColor = frameMidColor);
                             clonedDoc.querySelectorAll('.header-divider .diamond').forEach(el => el.style.backgroundColor = frameMidColor);
                             clonedDoc.querySelectorAll('.sign-line').forEach(el => el.style.borderColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.sign-label').forEach(el => el.style.color = mutedColor);
                             clonedDoc.querySelectorAll('.arch').forEach(el => el.style.borderColor = frameMidColor);
                             clonedDoc.querySelectorAll('.dot').forEach(el => el.style.backgroundColor = frameMidColor);
 
-                            // Handle the Artist name specifically to ensure it shows up as solid text
+                            // Handle the Artist name: hide by-line entirely when empty
                             const clonedArtist = clonedDoc.querySelector('.by-line .artist');
                             const clonedByWord = clonedDoc.querySelector('.by-line .by-word');
                             const clonedByLine = clonedDoc.querySelector('.by-line');
                             if (clonedArtist && clonedByWord && clonedByLine) {
                                 if (clonedArtist.innerText.trim() === '') {
-                                    clonedByLine.classList.remove('empty-artist'); // Remove pseudo-element
-                                    clonedArtist.innerText = 'Artist name'; // Place text directly inside
-                                    clonedArtist.style.opacity = '1';
-                                    clonedArtist.style.color = mutedColor; // Use resolved color
-                                    clonedArtist.style.fontStyle = 'italic';
-                                    clonedByWord.style.opacity = '1'; // Ensure "by " is also solid
+                                    clonedByLine.style.display = 'none';
                                 } else {
                                     clonedByLine.classList.remove('empty-artist');
                                     clonedByWord.style.opacity = '1';
+                                }
+                            }
+
+                            // Swap image placeholder text to "The certified painting" for export
+                            // and remove the empty img tag to prevent html2canvas fetch errors
+                            const clonedImageFrame = clonedDoc.getElementById('imageFrame');
+                            if (clonedImageFrame && clonedImageFrame.classList.contains('empty')) {
+                                const clonedImagePlaceholder = clonedDoc.getElementById('imagePlaceholder');
+                                if (clonedImagePlaceholder) {
+                                    clonedImagePlaceholder.innerText = 'The certified painting';
+                                }
+                                const clonedPaintingImg = clonedDoc.getElementById('paintingImg');
+                                if (clonedPaintingImg) {
+                                    clonedPaintingImg.remove();
                                 }
                             }
 
