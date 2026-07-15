@@ -510,10 +510,10 @@ input:checked+.slider:before {
     font-family: 'Cinzel', serif;
     font-size: 32px;
     font-weight: 500;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.3em;
     color: var(--text-primary);
     text-transform: uppercase;
-    padding-left: 0.35em;
+    padding-left: 0.3em;
     line-height: 1.2;
     transition: color 0.5s ease;
 }
@@ -562,12 +562,12 @@ input:checked+.slider:before {
 
 .eyebrow {
     font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.3em;
+    font-size: 13px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-muted);
     margin-bottom: 4mm;
-    padding-left: 0.3em;
+    padding-left: 0.2em;
     transition: color 0.5s ease;
 }
 
@@ -839,12 +839,12 @@ input:checked+.slider:before {
 
 .image-caption {
     font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: 0.25em;
+    font-size: 13px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-muted);
     text-align: center;
-    padding-left: 0.25em;
+    padding-left: 0.2em;
     margin-top: 4mm;
     transition: color 0.5s ease;
 }
