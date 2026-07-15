@@ -118,11 +118,56 @@
     z-index: 3;
     pointer-events: none;
   }
-  .corner-tl { top: 4mm;    left: 4mm;    }
-  .corner-tr { top: 4mm;    right: 4mm;   transform: scaleX(-1); }
-  .corner-bl { bottom: 4mm; left: 4mm;    transform: scaleY(-1); }
-  .corner-br { bottom: 4mm; right: 4mm;   transform: scale(-1, -1); }
-  .corner svg { width: 100%; height: 100%; display: block; }
+  .corner-tl { top: 4mm; left: 4mm; }
+  .corner-tr { top: 4mm; right: 4mm; }
+  .corner-bl { bottom: 4mm; left: 4mm; }
+  .corner-br { bottom: 4mm; right: 4mm; }
+
+  .arch {
+    position: absolute;
+    border-color: var(--frame-mid);
+    border-style: solid;
+    border-width: 0;
+  }
+  .arch.outer {
+    width: 7.7mm;
+    height: 7.7mm;
+  }
+  .arch.inner {
+    width: 5.25mm;
+    height: 5.25mm;
+  }
+  .dot {
+    position: absolute;
+    width: 0.8mm;
+    height: 0.8mm;
+    background-color: var(--frame-mid);
+    border-radius: 50%;
+  }
+
+  /* TL Corner */
+  .corner-tl .arch.outer { top: 0; left: 0; border-width: 1px 0 0 1px; border-top-left-radius: 7.7mm; }
+  .corner-tl .arch.inner { top: 2.45mm; left: 2.45mm; border-width: 0.5px 0 0 0.5px; border-top-left-radius: 5.25mm; }
+  .corner-tl .dot1 { top: 0; left: 7.7mm; margin-top: -0.4mm; margin-left: -0.4mm; }
+  .corner-tl .dot2 { top: 7.7mm; left: 0; margin-top: -0.4mm; margin-left: -0.4mm; }
+
+  /* TR Corner */
+  .corner-tr .arch.outer { top: 0; right: 0; border-width: 1px 1px 0 0; border-top-right-radius: 7.7mm; }
+  .corner-tr .arch.inner { top: 2.45mm; right: 2.45mm; border-width: 0.5px 0.5px 0 0; border-top-right-radius: 5.25mm; }
+  .corner-tr .dot1 { top: 0; right: 7.7mm; margin-top: -0.4mm; margin-right: -0.4mm; }
+  .corner-tr .dot2 { top: 7.7mm; right: 0; margin-top: -0.4mm; margin-right: -0.4mm; }
+
+  /* BL Corner */
+  .corner-bl .arch.outer { bottom: 0; left: 0; border-width: 0 0 1px 1px; border-bottom-left-radius: 7.7mm; }
+  .corner-bl .arch.inner { bottom: 2.45mm; left: 2.45mm; border-width: 0 0 0.5px 0.5px; border-bottom-left-radius: 5.25mm; }
+  .corner-bl .dot1 { bottom: 0; left: 7.7mm; margin-bottom: -0.4mm; margin-left: -0.4mm; }
+  .corner-bl .dot2 { bottom: 7.7mm; left: 0; margin-bottom: -0.4mm; margin-left: -0.4mm; }
+
+  /* BR Corner */
+  .corner-br .arch.outer { bottom: 0; right: 0; border-width: 0 1px 1px 0; border-bottom-right-radius: 7.7mm; }
+  .corner-br .arch.inner { bottom: 2.45mm; right: 2.45mm; border-width: 0 0.5px 0.5px 0; border-bottom-right-radius: 5.25mm; }
+  .corner-br .dot1 { bottom: 0; right: 7.7mm; margin-bottom: -0.4mm; margin-right: -0.4mm; }
+  .corner-br .dot2 { bottom: 7.7mm; right: 0; margin-bottom: -0.4mm; margin-right: -0.4mm; }
 
   /* ─── Inner content ─────────────────────────────────────── */
   .certificate__inner {
@@ -139,17 +184,39 @@
     text-align: center;
     margin-bottom: 3mm;
   }
+  
+  /* Header Ornament */
   .ornament-top {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     margin-bottom: 3mm;
   }
-  .ornament-top svg { width: 100px; height: 10px; }
+  .orn-line {
+    width: 60px;
+    height: 1px;
+    background: var(--frame-mid);
+  }
+  .orn-circle-outer {
+    width: 6px;
+    height: 6px;
+    border: 1px solid var(--frame-mid);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .orn-circle-inner {
+    width: 2px;
+    height: 2px;
+    background: var(--frame-mid);
+    border-radius: 50%;
+  }
 
   .cert-header h1 {
     font-family: 'Cinzel', serif;
-    font-size: 32px; /* Increased from 20px */
+    font-size: 32px; 
     font-weight: 500;
     letter-spacing: 0.35em;
     color: var(--text-primary);
@@ -177,12 +244,11 @@
     transform: rotate(45deg);
   }
 
-  /* ─── Body Grid (Bulletproof Layout) ────────────────────── */
+  /* ─── Body Grid ────────────────────── */
   .cert-body {
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* minmax(0, 1fr) prevents vertical images from pushing grid rows */
     grid-template-rows: auto minmax(0, 1fr) auto; 
     column-gap: 14mm;
     padding-top: 2mm;
@@ -218,7 +284,7 @@
   }
 
   .by-line {
-    font-size: 22px; /* Increased from 16px */
+    font-size: 22px; 
     color: var(--text-secondary);
     font-style: italic;
   }
@@ -232,22 +298,22 @@
   .meta-list {
     grid-column: 1;
     grid-row: 2;
-    align-self: center; /* Vertically centers in the middle row */
+    align-self: center; 
     display: flex;
     flex-direction: column;
     width: 100%;
   }
   .meta-row {
     display: grid;
-    grid-template-columns: 42mm 1fr; /* Slightly wider to accommodate larger text */
+    grid-template-columns: 42mm 1fr; 
     align-items: baseline;
-    padding: 3mm 0; /* Slightly increased padding */
+    padding: 3mm 0; 
     border-bottom: 0.5px solid rgba(196, 167, 125, 0.55);
   }
   .meta-row:last-child { border-bottom: none; }
   .meta-row dt {
     font-family: 'Cinzel', serif;
-    font-size: 11px; /* Increased from 9px */
+    font-size: 11px; 
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -255,7 +321,7 @@
     padding-left: 0.22em;
   }
   .meta-row dd {
-    font-size: 18px; /* Increased from 15px */
+    font-size: 18px; 
     color: var(--text-primary);
     font-style: italic;
   }
@@ -267,7 +333,7 @@
     align-self: end;
     display: flex;
     align-items: flex-end;
-    gap: 8mm; /* Reduced from 12mm to give signatures more space */
+    gap: 8mm; 
     padding-top: 8mm;
   }
 
@@ -310,10 +376,10 @@
 
   .signatures {
     flex: 1;
-    max-width: 90mm; /* Slightly widened to ensure single-line labels */
+    max-width: 90mm; 
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6mm; /* Reduced from 8mm */
+    gap: 6mm; 
   }
   .sign-field { display: flex; flex-direction: column; }
   .sign-line {
@@ -328,7 +394,7 @@
     color: var(--text-muted);
     margin-top: 2mm;
     padding-left: 0.25em;
-    white-space: nowrap; /* Prevents text from wrapping to a new line */
+    white-space: nowrap; 
   }
 
   /* ─── Right Column Items ────────────────────────────────── */
@@ -340,7 +406,7 @@
     width: 100%;
     height: 100%;
     min-height: 0;
-    max-height: 115mm; /* Strict height constraint for the grid cell */
+    max-height: 115mm; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -359,9 +425,9 @@
     cursor: pointer;
     transition: min-width 0.4s ease, min-height 0.4s ease, box-shadow 0.3s ease;
     
-    display: inline-block; /* Natively hugs the image content perfectly */
+    display: inline-block; 
     max-width: 100%;
-    line-height: 0; /* Removes inline-block whitespace gaps */
+    line-height: 0; 
     font-size: 0;
   }
 
@@ -386,7 +452,7 @@
   .image-frame img {
     display: block;
     max-width: 100%;
-    max-height: 85mm; /* Tuned to perfectly fit vertical images without overflowing the grid */
+    max-height: 85mm; 
     width: auto;
     height: auto;
   }
@@ -408,7 +474,7 @@
     color: var(--text-muted);
     text-align: center;
     padding-left: 0.35em;
-    display: none; /* Hidden by default, shown on image load */
+    display: none; 
   }
   
   /* Upload Overlay */
@@ -482,22 +548,39 @@
     <div class="frame-outer"></div>
     <div class="frame-inner"></div>
 
-    <!-- Corner ornaments -->
-    <div class="corner corner-tl"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
-    <div class="corner corner-tr"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
-    <div class="corner corner-bl"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
-    <div class="corner corner-br"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
+    <!-- Corner ornaments (Pure HTML/CSS divs) -->
+    <div class="corner corner-tl">
+      <div class="arch outer"></div>
+      <div class="arch inner"></div>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+    </div>
+    <div class="corner corner-tr">
+      <div class="arch outer"></div>
+      <div class="arch inner"></div>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+    </div>
+    <div class="corner corner-bl">
+      <div class="arch outer"></div>
+      <div class="arch inner"></div>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+    </div>
+    <div class="corner corner-br">
+      <div class="arch outer"></div>
+      <div class="arch inner"></div>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+    </div>
 
     <div class="certificate__inner">
 
       <header class="cert-header">
         <div class="ornament-top">
-          <svg viewBox="0 0 120 12" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="6" x2="48" y2="6" stroke="#8b7355" stroke-width="0.6"/>
-            <circle cx="60" cy="6" r="2.5" fill="none" stroke="#8b7355" stroke-width="0.8"/>
-            <circle cx="60" cy="6" r="0.8" fill="#8b7355"/>
-            <line x1="72" y1="6" x2="120" y2="6" stroke="#8b7355" stroke-width="0.6"/>
-          </svg>
+          <div class="orn-line"></div>
+          <div class="orn-circle-outer"><div class="orn-circle-inner"></div></div>
+          <div class="orn-line"></div>
         </div>
         <h1>Fine Art Authenticity Certificate</h1>
         <div class="header-divider">
@@ -596,26 +679,26 @@
       paintingImg.style.display = 'block';
       imagePlaceholder.style.display = 'none';
       imageCaption.style.display = 'block';
-      imageFrame.classList.remove('empty'); // Triggers frame to shrink to image size
+      imageFrame.classList.remove('empty'); 
     }
 
     function hideImage() {
       paintingImg.style.display = 'none';
       imagePlaceholder.style.display = 'block';
       imageCaption.style.display = 'none';
-      imageFrame.classList.add('empty'); // Triggers frame to return to wide empty state
+      imageFrame.classList.add('empty'); 
     }
 
     paintingImg.addEventListener('load', showImage);
     paintingImg.addEventListener('error', hideImage);
 
-    // Trigger initial check in case painting.jpg is already cached or missing
+    // Trigger initial check 
     if (paintingImg.complete && paintingImg.naturalWidth > 0) {
       showImage();
     } else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
       hideImage();
     } else {
-      hideImage(); // hide by default until loaded
+      hideImage(); 
     }
 
     // ============================================================
@@ -663,7 +746,7 @@
     function waitForImage(img) {
       return new Promise(resolve => {
         if (img.complete && img.naturalWidth > 0) resolve();
-        else if (img.complete && img.naturalWidth === 0) resolve(); // resolves if broken
+        else if (img.complete && img.naturalWidth === 0) resolve(); 
         else {
           img.addEventListener('load',  resolve, { once: true });
           img.addEventListener('error', resolve, { once: true });
