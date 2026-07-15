@@ -1,7 +1,4 @@
 import './style.css';
-import html2pdf from 'html2pdf.js';
-import heic2any from 'heic2any';
-import QRCode from 'qrcode';
 
 // ============================================================
 //  PAPER TEXTURE GENERATOR (Canvas to PNG for perfect PDF export)
@@ -361,10 +358,10 @@ fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const imageLoader = document.getElementById('imageLoader');
     const isHeic = file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-
+    
     if (isHeic) {
+        const heic2any = (await import('heic2any')).default;
         imageLoader.style.display = 'flex'; // Show loading spinner
         try {
             // Convert HEIC to JPEG blob
@@ -435,6 +432,7 @@ const qrModalOverlay = document.getElementById('qrModalOverlay');
 const qrUrlInput = document.getElementById('qrUrlInput');
 
         async function generateQR(url) {
+            const QRCode = (await import('qrcode')).default;
             qrContainer.innerHTML = '';
             const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-dark').trim() || '#4a4a4a';
             
@@ -510,6 +508,7 @@ function waitForQR() {
 }
 
 async function exportPDF() {
+    const html2pdf = (await import('html2pdf.js')).default;
     const btn = document.getElementById('exportBtn');
     const btnLabel = btn.querySelector('span');
     const original = btnLabel.textContent;
