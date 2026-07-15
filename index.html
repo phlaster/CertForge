@@ -31,6 +31,7 @@
     color: var(--text-primary);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.5s ease;
   }
 
   body {
@@ -49,13 +50,43 @@
     background-color: var(--bg-page);
     pointer-events: none;
     z-index: 0;
+    transition: background-color 0.5s ease;
   }
 
-  /* ─── Export button ─────────────────────────────────────── */
-  .export-btn {
+  /* ─── Top Bar (Palette + Export) ────────────────────────── */
+  .top-bar {
     position: fixed;
-    top: 28px;
+    top: 24px;
     right: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+  }
+
+  .palette-picker {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 8px 12px;
+    border-radius: 30px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    padding: 0;
+  }
+  .swatch:hover { transform: scale(1.15); }
+  .swatch.active { border-color: #333; transform: scale(1.1); }
+
+  .export-btn {
     background: var(--text-primary);
     color: var(--bg-cert);
     border: none;
@@ -66,8 +97,7 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, background-color 0.5s ease, color 0.5s ease;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -92,6 +122,7 @@
       0 24px 60px var(--paper-shadow),
       0 6px 18px rgba(61, 52, 42, 0.12);
     flex-shrink: 0;
+    transition: background-color 0.5s ease;
   }
 
   /* Frame */
@@ -101,6 +132,7 @@
     border: 1px solid var(--frame-mid);
     pointer-events: none;
     z-index: 2;
+    transition: border-color 0.5s ease;
   }
   .frame-inner {
     position: absolute;
@@ -108,9 +140,10 @@
     border: 0.5px solid var(--frame-light);
     pointer-events: none;
     z-index: 2;
+    transition: border-color 0.5s ease;
   }
 
-  /* Corner ornaments */
+  /* ─── Corner Ornaments (Pure CSS for perfect PDF export) ── */
   .corner {
     position: absolute;
     width: 14mm;
@@ -128,21 +161,17 @@
     border-color: var(--frame-mid);
     border-style: solid;
     border-width: 0;
+    transition: border-color 0.5s ease;
   }
-  .arch.outer {
-    width: 7.7mm;
-    height: 7.7mm;
-  }
-  .arch.inner {
-    width: 5.25mm;
-    height: 5.25mm;
-  }
+  .arch.outer { width: 7.7mm; height: 7.7mm; }
+  .arch.inner { width: 5.25mm; height: 5.25mm; }
   .dot {
     position: absolute;
     width: 0.8mm;
     height: 0.8mm;
     background-color: var(--frame-mid);
     border-radius: 50%;
+    transition: background-color 0.5s ease;
   }
 
   /* TL Corner */
@@ -185,7 +214,6 @@
     margin-bottom: 3mm;
   }
   
-  /* Header Ornament */
   .ornament-top {
     display: flex;
     align-items: center;
@@ -197,6 +225,7 @@
     width: 60px;
     height: 1px;
     background: var(--frame-mid);
+    transition: background-color 0.5s ease;
   }
   .orn-circle-outer {
     width: 6px;
@@ -206,12 +235,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: border-color 0.5s ease;
   }
   .orn-circle-inner {
     width: 2px;
     height: 2px;
     background: var(--frame-mid);
     border-radius: 50%;
+    transition: background-color 0.5s ease;
   }
 
   .cert-header h1 {
@@ -223,6 +254,7 @@
     text-transform: uppercase;
     padding-left: 0.35em;
     line-height: 1.2;
+    transition: color 0.5s ease;
   }
 
   .header-divider {
@@ -237,14 +269,16 @@
     width: 60px;
     height: 1px;
     background: var(--frame-mid);
+    transition: background-color 0.5s ease;
   }
   .header-divider .diamond {
     width: 5px; height: 5px;
     background: var(--frame-mid);
     transform: rotate(45deg);
+    transition: background-color 0.5s ease;
   }
 
-  /* ─── Body Grid ────────────────────── */
+  /* ─── Body Grid ─────────────────────────────────────────── */
   .cert-body {
     flex: 1;
     display: grid;
@@ -271,6 +305,7 @@
     color: var(--text-muted);
     margin-bottom: 4mm;
     padding-left: 0.3em;
+    transition: color 0.5s ease;
   }
 
   .painting-title {
@@ -281,18 +316,21 @@
     line-height: 1.1;
     color: var(--text-primary);
     margin-bottom: 3mm;
+    transition: color 0.5s ease;
   }
 
   .by-line {
     font-size: 22px; 
     color: var(--text-secondary);
     font-style: italic;
+    transition: color 0.5s ease;
   }
   .by-line .artist {
     font-weight: 500;
     font-style: normal;
     color: var(--text-primary);
     letter-spacing: 0.02em;
+    transition: color 0.5s ease;
   }
 
   .meta-list {
@@ -319,14 +357,16 @@
     color: var(--text-muted);
     font-weight: 500;
     padding-left: 0.22em;
+    transition: color 0.5s ease;
   }
   .meta-row dd {
     font-size: 18px; 
     color: var(--text-primary);
     font-style: italic;
+    transition: color 0.5s ease;
   }
 
-  /* Bottom Left Area (QR + Signatures) */
+  /* Bottom Left Area */
   .cert-bottom-left {
     grid-column: 1;
     grid-row: 3;
@@ -351,6 +391,7 @@
     text-transform: uppercase;
     color: var(--text-muted);
     padding-left: 0.3em;
+    transition: color 0.5s ease;
   }
   .qr-wrap {
     width: 20mm;
@@ -372,6 +413,7 @@
     font-size: 12px;
     color: var(--text-primary);
     letter-spacing: 0.08em;
+    transition: color 0.5s ease;
   }
 
   .signatures {
@@ -385,6 +427,7 @@
   .sign-line {
     height: 12mm;
     border-bottom: 0.5px solid var(--frame-mid);
+    transition: border-color 0.5s ease;
   }
   .sign-label {
     font-family: 'Cinzel', serif;
@@ -395,6 +438,7 @@
     margin-top: 2mm;
     padding-left: 0.25em;
     white-space: nowrap; 
+    transition: color 0.5s ease;
   }
 
   /* ─── Right Column Items ────────────────────────────────── */
@@ -431,7 +475,6 @@
     font-size: 0;
   }
 
-  /* Empty state class */
   .image-frame.empty {
     min-width: 120mm;
     min-height: 80mm;
@@ -464,6 +507,7 @@
     color: var(--text-muted);
     text-align: center;
     padding: 0 10px;
+    transition: color 0.5s ease;
   }
 
   .image-caption {
@@ -475,9 +519,9 @@
     text-align: center;
     padding-left: 0.35em;
     display: none; 
+    transition: color 0.5s ease;
   }
   
-  /* Upload Overlay */
   .upload-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -494,22 +538,18 @@
     transition: opacity 0.3s ease;
     pointer-events: none;
   }
-  .image-frame:hover .upload-overlay {
-    opacity: 1;
-  }
+  .image-frame:hover .upload-overlay { opacity: 1; }
 
   /* ─── Editable Fields Styling ───────────────────────────── */
   [contenteditable="true"] {
     outline: none;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.5s ease;
     border-radius: 2px;
     padding: 0 4px;
     margin: 0 -4px;
     cursor: text;
   }
-  [contenteditable="true"]:hover {
-    background-color: var(--edit-hover);
-  }
+  [contenteditable="true"]:hover { background-color: var(--edit-hover); }
   [contenteditable="true"]:focus {
     background-color: var(--edit-focus);
     box-shadow: inset 0 0 0 1px rgba(139, 115, 85, 0.3);
@@ -524,7 +564,7 @@
   @media print {
     body { background: white; padding: 0; display: block; }
     body::before { display: none; }
-    .export-btn { display: none !important; }
+    .top-bar { display: none !important; }
     .certificate { box-shadow: none; transform: none; }
     [contenteditable="true"] { background-color: transparent !important; box-shadow: none !important; }
     .upload-overlay { display: none !important; }
@@ -533,14 +573,26 @@
 </head>
 <body>
 
-  <button class="export-btn" id="exportBtn" onclick="exportPDF()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    <span>Export PDF</span>
-  </button>
+  <div class="top-bar">
+    <div class="palette-picker">
+      <button class="swatch active" data-palette="1" style="background: #e3dccb;" title="Classic Sepia"></button>
+      <button class="swatch" data-palette="2" style="background: #d8e0d3;" title="Sage Green"></button>
+      <button class="swatch" data-palette="3" style="background: #e6d4d6;" title="Dusty Rose"></button>
+      <button class="swatch" data-palette="4" style="background: #d4d8e0;" title="Slate Blue"></button>
+      <button class="swatch" data-palette="5" style="background: #dfd8e8;" title="Lavender Blush"></button>
+      <button class="swatch" data-palette="6" style="background: #e6dfc8;" title="Golden Ochre"></button>
+      <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
+      <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
+    </div>
+    <button class="export-btn" id="exportBtn" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span>Export PDF</span>
+    </button>
+  </div>
 
   <div class="certificate" id="certificate">
 
@@ -548,7 +600,7 @@
     <div class="frame-outer"></div>
     <div class="frame-inner"></div>
 
-    <!-- Corner ornaments (Pure HTML/CSS divs) -->
+    <!-- Corner ornaments -->
     <div class="corner corner-tl">
       <div class="arch outer"></div>
       <div class="arch inner"></div>
@@ -582,7 +634,7 @@
           <div class="orn-circle-outer"><div class="orn-circle-inner"></div></div>
           <div class="orn-line"></div>
         </div>
-        <h1>Fine Art Authenticity Certificate</h1>
+        <h1 contenteditable="true" spellcheck="false">Fine Art Authenticity Certificate</h1>
         <div class="header-divider">
           <span class="line"></span>
           <span class="diamond"></span>
@@ -610,7 +662,7 @@
           </div>
           <div class="meta-row">
             <dt>Dimensions</dt>
-            <dd contenteditable="true" spellcheck="false">edit 0 × 0 cm</dd>
+            <dd contenteditable="true" spellcheck="false">edit dimensions</dd>
           </div>
         </dl>
 
@@ -653,6 +705,71 @@
 
   <script>
     // ============================================================
+    //  PALETTE PICKER LOGIC
+    // ============================================================
+    const palettes = {
+      1: { // Classic Sepia
+        '--bg-page': '#e3dccb', '--bg-cert': '#f7f1e3', '--bg-cert-warm': '#f1e7d2',
+        '--frame-dark': '#6b5d4a', '--frame-mid': '#8b7355', '--frame-light': '#c4a77d',
+        '--text-primary': '#3d342a', '--text-secondary': '#5a4a3a', '--text-muted': '#8b7355',
+        '--edit-hover': 'rgba(196, 167, 125, 0.15)', '--edit-focus': 'rgba(196, 167, 125, 0.25)'
+      },
+      2: { // Sage Green
+        '--bg-page': '#d8e0d3', '--bg-cert': '#f2f6ef', '--bg-cert-warm': '#e4ede0',
+        '--frame-dark': '#4d6147', '--frame-mid': '#6f8b6a', '--frame-light': '#a3bd9e',
+        '--text-primary': '#2d3a2a', '--text-secondary': '#455a40', '--text-muted': '#6f8b6a',
+        '--edit-hover': 'rgba(111, 139, 106, 0.15)', '--edit-focus': 'rgba(111, 139, 106, 0.25)'
+      },
+      3: { // Dusty Rose
+        '--bg-page': '#e6d4d6', '--bg-cert': '#f9f0f1', '--bg-cert-warm': '#f0dde0',
+        '--frame-dark': '#7a525a', '--frame-mid': '#a87882', '--frame-light': '#d4adb4',
+        '--text-primary': '#42272c', '--text-secondary': '#6b404a', '--text-muted': '#a87882',
+        '--edit-hover': 'rgba(168, 120, 130, 0.15)', '--edit-focus': 'rgba(168, 120, 130, 0.25)'
+      },
+      4: { // Slate Blue
+        '--bg-page': '#d4d8e0', '--bg-cert': '#eef0f6', '--bg-cert-warm': '#e0e3ec',
+        '--frame-dark': '#4a526a', '--frame-mid': '#6a7591', '--frame-light': '#a0aac0',
+        '--text-primary': '#2a2e3d', '--text-secondary': '#404a60', '--text-muted': '#6a7591',
+        '--edit-hover': 'rgba(106, 117, 145, 0.15)', '--edit-focus': 'rgba(106, 117, 145, 0.25)'
+      },
+      5: { // Lavender Blush
+        '--bg-page': '#dfd8e8', '--bg-cert': '#f5f1fa', '--bg-cert-warm': '#ebe3f2',
+        '--frame-dark': '#5a4b6e', '--frame-mid': '#8270a0', '--frame-light': '#b8a8ce',
+        '--text-primary': '#332a44', '--text-secondary': '#4d4063', '--text-muted': '#8270a0',
+        '--edit-hover': 'rgba(130, 112, 160, 0.15)', '--edit-focus': 'rgba(130, 112, 160, 0.25)'
+      },
+      6: { // Golden Ochre
+        '--bg-page': '#e6dfc8', '--bg-cert': '#f8f4e6', '--bg-cert-warm': '#efe9d4',
+        '--frame-dark': '#6e623a', '--frame-mid': '#9b8a52', '--frame-light': '#cab98c',
+        '--text-primary': '#3f3a20', '--text-secondary': '#5e5430', '--text-muted': '#9b8a52',
+        '--edit-hover': 'rgba(155, 138, 82, 0.15)', '--edit-focus': 'rgba(155, 138, 82, 0.25)'
+      },
+      7: { // Terracotta
+        '--bg-page': '#e5d6cc', '--bg-cert': '#f6ece5', '--bg-cert-warm': '#eddfd4',
+        '--frame-dark': '#725142', '--frame-mid': '#a17558', '--frame-light': '#d4a98e',
+        '--text-primary': '#402a20', '--text-secondary': '#624230', '--text-muted': '#a17558',
+        '--edit-hover': 'rgba(161, 117, 88, 0.15)', '--edit-focus': 'rgba(161, 117, 88, 0.25)'
+      },
+      8: { // Teal Mist
+        '--bg-page': '#cce0df', '--bg-cert': '#ecf6f5', '--bg-cert-warm': '#d8ecea',
+        '--frame-dark': '#3a6b68', '--frame-mid': '#588f8c', '--frame-light': '#8fbab7',
+        '--text-primary': '#1f3836', '--text-secondary': '#2d4e4b', '--text-muted': '#588f8c',
+        '--edit-hover': 'rgba(88, 143, 140, 0.15)', '--edit-focus': 'rgba(88, 143, 140, 0.25)'
+      }
+    };
+
+    document.querySelectorAll('.swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        const palette = palettes[swatch.dataset.palette];
+        for (const [key, value] of Object.entries(palette)) {
+          document.documentElement.style.setProperty(key, value);
+        }
+      });
+    });
+
+    // ============================================================
     //  IMAGE UPLOAD & LOAD LOGIC
     // ============================================================
     const imageFrame = document.getElementById('imageFrame');
@@ -674,7 +791,6 @@
       }
     });
 
-    // Handle image display state (tightly wrap frame to image)
     function showImage() {
       paintingImg.style.display = 'block';
       imagePlaceholder.style.display = 'none';
@@ -692,7 +808,6 @@
     paintingImg.addEventListener('load', showImage);
     paintingImg.addEventListener('error', hideImage);
 
-    // Trigger initial check 
     if (paintingImg.complete && paintingImg.naturalWidth > 0) {
       showImage();
     } else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
@@ -791,7 +906,7 @@
             scale: 3,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: '#f7f1e3',
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-cert').trim(),
             logging: false,
             onclone: function(clonedDoc) {
               clonedDoc.querySelectorAll('[contenteditable="true"]').forEach(el => {
