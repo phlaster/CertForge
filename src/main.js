@@ -105,7 +105,7 @@ if (regenTextureText) {
 // ============================================================
 const palettes = {
     1: {
-        '--bg-page': '#d8d8d8',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f0f0f0',
         '--bg-cert-warm': '#e5e5e5',
         '--frame-dark': '#4a4a4a',
@@ -118,7 +118,7 @@ const palettes = {
         '--edit-focus': 'rgba(110, 110, 110, 0.25)'
     },
     2: {
-        '--bg-page': '#e3dccb',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f7f1e3',
         '--bg-cert-warm': '#f1e7d2',
         '--frame-dark': '#6b5d4a',
@@ -131,7 +131,7 @@ const palettes = {
         '--edit-focus': 'rgba(196, 167, 125, 0.25)'
     },
     3: {
-        '--bg-page': '#d8e0d3',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f2f6ef',
         '--bg-cert-warm': '#e4ede0',
         '--frame-dark': '#4d6147',
@@ -144,7 +144,7 @@ const palettes = {
         '--edit-focus': 'rgba(111, 139, 106, 0.25)'
     },
     4: {
-        '--bg-page': '#e6d4d6',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f9f0f1',
         '--bg-cert-warm': '#f0dde0',
         '--frame-dark': '#7a525a',
@@ -157,7 +157,7 @@ const palettes = {
         '--edit-focus': 'rgba(168, 120, 130, 0.25)'
     },
     5: {
-        '--bg-page': '#d4d8e0',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#eef0f6',
         '--bg-cert-warm': '#e0e3ec',
         '--frame-dark': '#4a526a',
@@ -170,7 +170,7 @@ const palettes = {
         '--edit-focus': 'rgba(106, 117, 145, 0.25)'
     },
     6: {
-        '--bg-page': '#dfd8e8',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f5f1fa',
         '--bg-cert-warm': '#ebe3f2',
         '--frame-dark': '#5a4b6e',
@@ -183,7 +183,7 @@ const palettes = {
         '--edit-focus': 'rgba(130, 112, 160, 0.25)'
     },
     7: {
-        '--bg-page': '#e5d6cc',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#f6ece5',
         '--bg-cert-warm': '#eddfd4',
         '--frame-dark': '#725142',
@@ -196,7 +196,7 @@ const palettes = {
         '--edit-focus': 'rgba(161, 117, 88, 0.25)'
     },
     8: {
-        '--bg-page': '#cce0df',
+        '--bg-page': '#dbdbdb',
         '--bg-cert': '#ecf6f5',
         '--bg-cert-warm': '#d8ecea',
         '--frame-dark': '#3a6b68',
