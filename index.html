@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fine Art Authenticity Certificate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page:        #e3dccb;
+    --bg-cert:        #f7f1e3;
+    --bg-cert-warm:   #f1e7d2;
+    --frame-dark:     #6b5d4a;
+    --frame-mid:      #8b7355;
+    --frame-light:    #c4a77d;
+    --accent-sage:    #7d8b6f;
+    --text-primary:   #3d342a;
+    --text-secondary: #5a4a3a;
+    --text-muted:     #8b7355;
+    --paper-shadow:   rgba(61, 52, 42, 0.18);
+    --edit-hover:     rgba(196, 167, 125, 0.15);
+    --edit-focus:     rgba(196, 167, 125, 0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg-page);
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    position: relative;
+    overflow-x: auto;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background-color: var(--bg-page);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── Export button ─────────────────────────────────────── */
+  .export-btn {
+    position: fixed;
+    top: 28px;
+    right: 28px;
+    background: var(--text-primary);
+    color: var(--bg-cert);
+    border: none;
+    padding: 12px 22px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 18px rgba(61, 52, 42, 0.22);
+  }
+  .export-btn:hover {
+    background: var(--frame-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(61, 52, 42, 0.3);
+  }
+  .export-btn:active { transform: translateY(0); }
+  .export-btn svg { width: 13px; height: 13px; }
+  .export-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ─── Certificate (A4 landscape) ────────────────────────── */
+  .certificate {
+    width: 297mm;
+    height: 210mm;
+    background: var(--bg-cert);
+    position: relative;
+    box-shadow:
+      0 24px 60px var(--paper-shadow),
+      0 6px 18px rgba(61, 52, 42, 0.12);
+    flex-shrink: 0;
+  }
+
+  /* Frame */
+  .frame-outer {
+    position: absolute;
+    top: 6mm; right: 6mm; bottom: 6mm; left: 6mm;
+    border: 1px solid var(--frame-mid);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .frame-inner {
+    position: absolute;
+    top: 9mm; right: 9mm; bottom: 9mm; left: 9mm;
+    border: 0.5px solid var(--frame-light);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 14mm;
+    height: 14mm;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .corner-tl { top: 4mm;    left: 4mm;    }
+  .corner-tr { top: 4mm;    right: 4mm;   transform: scaleX(-1); }
+  .corner-bl { bottom: 4mm; left: 4mm;    transform: scaleY(-1); }
+  .corner-br { bottom: 4mm; right: 4mm;   transform: scale(-1, -1); }
+  .corner svg { width: 100%; height: 100%; display: block; }
+
+  /* ─── Inner content ─────────────────────────────────────── */
+  .certificate__inner {
+    position: absolute;
+    top: 14mm; right: 14mm; bottom: 14mm; left: 14mm;
+    padding: 4mm 6mm;
+    display: flex;
+    flex-direction: column;
+    z-index: 4;
+  }
+
+  /* Header */
+  .cert-header {
+    text-align: center;
+    margin-bottom: 3mm;
+  }
+  .ornament-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3mm;
+  }
+  .ornament-top svg { width: 100px; height: 10px; }
+
+  .cert-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 32px; /* Increased from 20px */
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    padding-left: 0.35em;
+    line-height: 1.2;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 4mm auto 0;
+    max-width: 100mm;
+  }
+  .header-divider .line {
+    width: 60px;
+    height: 1px;
+    background: var(--frame-mid);
+  }
+  .header-divider .diamond {
+    width: 5px; height: 5px;
+    background: var(--frame-mid);
+    transform: rotate(45deg);
+  }
+
+  /* ─── Body Grid (Bulletproof Layout) ────────────────────── */
+  .cert-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr) prevents vertical images from pushing grid rows */
+    grid-template-rows: auto minmax(0, 1fr) auto; 
+    column-gap: 14mm;
+    padding-top: 2mm;
+    min-height: 0;
+  }
+
+  /* ─── Left Column Items ─────────────────────────────────── */
+  .info-top {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: center;
+    padding-bottom: 4mm;
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4mm;
+    padding-left: 0.3em;
+  }
+
+  .painting-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 3mm;
+  }
+
+  .by-line {
+    font-size: 22px; /* Increased from 16px */
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+  .by-line .artist {
+    font-weight: 500;
+    font-style: normal;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .meta-list {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center; /* Vertically centers in the middle row */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .meta-row {
+    display: grid;
+    grid-template-columns: 42mm 1fr; /* Slightly wider to accommodate larger text */
+    align-items: baseline;
+    padding: 3mm 0; /* Slightly increased padding */
+    border-bottom: 0.5px solid rgba(196, 167, 125, 0.55);
+  }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-row dt {
+    font-family: 'Cinzel', serif;
+    font-size: 11px; /* Increased from 9px */
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding-left: 0.22em;
+  }
+  .meta-row dd {
+    font-size: 18px; /* Increased from 15px */
+    color: var(--text-primary);
+    font-style: italic;
+  }
+
+  /* Bottom Left Area (QR + Signatures) */
+  .cert-bottom-left {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: end;
+    display: flex;
+    align-items: flex-end;
+    gap: 8mm; /* Reduced from 12mm to give signatures more space */
+    padding-top: 8mm;
+  }
+
+  .qr-block {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2mm;
+  }
+  .qr-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding-left: 0.3em;
+  }
+  .qr-wrap {
+    width: 20mm;
+    height: 20mm;
+    background: #fff;
+    padding: 1.5mm;
+    box-shadow:
+      0 1px 3px rgba(61, 52, 42, 0.12),
+      inset 0 0 0 0.5px rgba(61, 52, 42, 0.08);
+  }
+  #qrcode { width: 100%; height: 100%; }
+  #qrcode img, #qrcode canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+  .qr-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+  }
+
+  .signatures {
+    flex: 1;
+    max-width: 90mm; /* Slightly widened to ensure single-line labels */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6mm; /* Reduced from 8mm */
+  }
+  .sign-field { display: flex; flex-direction: column; }
+  .sign-line {
+    height: 12mm;
+    border-bottom: 0.5px solid var(--frame-mid);
+  }
+  .sign-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 2mm;
+    padding-left: 0.25em;
+    white-space: nowrap; /* Prevents text from wrapping to a new line */
+  }
+
+  /* ─── Right Column Items ────────────────────────────────── */
+  .image-container {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 115mm; /* Strict height constraint for the grid cell */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4mm;
+  }
+  
+  .image-frame {
+    background: #fff;
+    padding: 5mm;
+    box-shadow:
+      0 1px 2px rgba(61, 52, 42, 0.08),
+      0 6px 18px rgba(61, 52, 42, 0.15),
+      inset 0 0 0 0.5px rgba(61, 52, 42, 0.12);
+    position: relative;
+    cursor: pointer;
+    transition: min-width 0.4s ease, min-height 0.4s ease, box-shadow 0.3s ease;
+    
+    display: inline-block; /* Natively hugs the image content perfectly */
+    max-width: 100%;
+    line-height: 0; /* Removes inline-block whitespace gaps */
+    font-size: 0;
+  }
+
+  /* Empty state class */
+  .image-frame.empty {
+    min-width: 120mm;
+    min-height: 80mm;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    line-height: 1.5;
+  }
+
+  .image-frame:hover {
+    box-shadow:
+      0 1px 2px rgba(61, 52, 42, 0.08),
+      0 12px 28px rgba(61, 52, 42, 0.25),
+      inset 0 0 0 1px rgba(61, 52, 42, 0.3);
+  }
+  
+  .image-frame img {
+    display: block;
+    max-width: 100%;
+    max-height: 85mm; /* Tuned to perfectly fit vertical images without overflowing the grid */
+    width: auto;
+    height: auto;
+  }
+
+  .image-placeholder {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .image-caption {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    padding-left: 0.35em;
+    display: none; /* Hidden by default, shown on image load */
+  }
+  
+  /* Upload Overlay */
+  .upload-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(61, 52, 42, 0.55);
+    color: #f7f1e3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .image-frame:hover .upload-overlay {
+    opacity: 1;
+  }
+
+  /* ─── Editable Fields Styling ───────────────────────────── */
+  [contenteditable="true"] {
+    outline: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 2px;
+    padding: 0 4px;
+    margin: 0 -4px;
+    cursor: text;
+  }
+  [contenteditable="true"]:hover {
+    background-color: var(--edit-hover);
+  }
+  [contenteditable="true"]:focus {
+    background-color: var(--edit-focus);
+    box-shadow: inset 0 0 0 1px rgba(139, 115, 85, 0.3);
+  }
+
+  /* Responsive scale */
+  @media (max-width: 1280px) { .certificate { transform: scale(0.85); transform-origin: center center; } }
+  @media (max-width: 1050px) { .certificate { transform: scale(0.7);  } }
+  @media (max-width: 850px)  { .certificate { transform: scale(0.55); } }
+  @media (max-width: 650px)  { .certificate { transform: scale(0.4);  } }
+
+  @media print {
+    body { background: white; padding: 0; display: block; }
+    body::before { display: none; }
+    .export-btn { display: none !important; }
+    .certificate { box-shadow: none; transform: none; }
+    [contenteditable="true"] { background-color: transparent !important; box-shadow: none !important; }
+    .upload-overlay { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <button class="export-btn" id="exportBtn" onclick="exportPDF()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    <span>Export PDF</span>
+  </button>
+
+  <div class="certificate" id="certificate">
+
+    <!-- Frame lines -->
+    <div class="frame-outer"></div>
+    <div class="frame-inner"></div>
+
+    <!-- Corner ornaments -->
+    <div class="corner corner-tl"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
+    <div class="corner corner-tr"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
+    <div class="corner corner-bl"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
+    <div class="corner corner-br"><svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M 0 22 Q 0 0 22 0" stroke="#8b7355" fill="none" stroke-width="0.7"/><path d="M 7 22 Q 7 7 22 7" stroke="#8b7355" fill="none" stroke-width="0.4"/><circle cx="22" cy="0" r="1.2" fill="#8b7355"/><circle cx="0" cy="22" r="1.2" fill="#8b7355"/></svg></div>
+
+    <div class="certificate__inner">
+
+      <header class="cert-header">
+        <div class="ornament-top">
+          <svg viewBox="0 0 120 12" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="6" x2="48" y2="6" stroke="#8b7355" stroke-width="0.6"/>
+            <circle cx="60" cy="6" r="2.5" fill="none" stroke="#8b7355" stroke-width="0.8"/>
+            <circle cx="60" cy="6" r="0.8" fill="#8b7355"/>
+            <line x1="72" y1="6" x2="120" y2="6" stroke="#8b7355" stroke-width="0.6"/>
+          </svg>
+        </div>
+        <h1>Fine Art Authenticity Certificate</h1>
+        <div class="header-divider">
+          <span class="line"></span>
+          <span class="diamond"></span>
+          <span class="line"></span>
+        </div>
+      </header>
+
+      <main class="cert-body">
+
+        <!-- Left Column -->
+        <div class="info-top">
+          <p class="eyebrow">This is to certify the authenticity of</p>
+          <h2 class="painting-title" contenteditable="true" spellcheck="false">Edit artwork name</h2>
+          <p class="by-line">by <span class="artist" contenteditable="true" spellcheck="false">Edit artist name</span></p>
+        </div>
+
+        <dl class="meta-list">
+          <div class="meta-row">
+            <dt>Year of creation</dt>
+            <dd contenteditable="true" spellcheck="false">edit year</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Technique</dt>
+            <dd contenteditable="true" spellcheck="false">edit technique</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Dimensions</dt>
+            <dd contenteditable="true" spellcheck="false">edit 0 × 0 cm</dd>
+          </div>
+        </dl>
+
+        <div class="cert-bottom-left">
+          <div class="qr-block">
+            <span class="qr-eyebrow">Follow the artist</span>
+            <div class="qr-wrap"><div id="qrcode"></div></div>
+            <span class="qr-label" contenteditable="true" spellcheck="false">@username</span>
+          </div>
+          
+          <div class="signatures">
+            <div class="sign-field">
+              <div class="sign-line"></div>
+              <p class="sign-label">Artist's signature</p>
+            </div>
+            <div class="sign-field">
+              <div class="sign-line"></div>
+              <p class="sign-label">Date signed</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="image-container">
+          <div class="image-frame empty" id="imageFrame">
+            <input type="file" id="fileInput" accept="image/*" hidden>
+            <span class="image-placeholder" id="imagePlaceholder">The certified painting</span>
+            <img src="" alt="The certified painting" id="paintingImg" style="display: none;">
+            <div class="upload-overlay">Click to replace image</div>
+          </div>
+          <p class="image-caption" id="imageCaption">— The certified work —</p>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    // ============================================================
+    //  IMAGE UPLOAD & LOAD LOGIC
+    // ============================================================
+    const imageFrame = document.getElementById('imageFrame');
+    const fileInput = document.getElementById('fileInput');
+    const paintingImg = document.getElementById('paintingImg');
+    const imagePlaceholder = document.getElementById('imagePlaceholder');
+    const imageCaption = document.getElementById('imageCaption');
+
+    imageFrame.addEventListener('click', () => fileInput.click());
+    
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          paintingImg.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle image display state (tightly wrap frame to image)
+    function showImage() {
+      paintingImg.style.display = 'block';
+      imagePlaceholder.style.display = 'none';
+      imageCaption.style.display = 'block';
+      imageFrame.classList.remove('empty'); // Triggers frame to shrink to image size
+    }
+
+    function hideImage() {
+      paintingImg.style.display = 'none';
+      imagePlaceholder.style.display = 'block';
+      imageCaption.style.display = 'none';
+      imageFrame.classList.add('empty'); // Triggers frame to return to wide empty state
+    }
+
+    paintingImg.addEventListener('load', showImage);
+    paintingImg.addEventListener('error', hideImage);
+
+    // Trigger initial check in case painting.jpg is already cached or missing
+    if (paintingImg.complete && paintingImg.naturalWidth > 0) {
+      showImage();
+    } else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
+      hideImage();
+    } else {
+      hideImage(); // hide by default until loaded
+    }
+
+    // ============================================================
+    //  QR CODE LOGIC
+    // ============================================================
+    const handleElement = document.querySelector('.qr-label');
+    const qrContainer = document.getElementById('qrcode');
+
+    function generateQR(url) {
+      qrContainer.innerHTML = ''; 
+      new QRCode(qrContainer, {
+        text: url,
+        width: 80,
+        height: 80,
+        colorDark: "#3d342a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    function updateQR() {
+      let handle = handleElement.innerText.trim().replace(/^@/, '');
+      if (!handle) handle = "instagram.com"; 
+      const url = `https://www.instagram.com/${handle}`;
+      generateQR(url);
+    }
+
+    updateQR();
+    handleElement.addEventListener('input', updateQR);
+
+    document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+      el.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        document.execCommand('insertText', false, text);
+      });
+    });
+
+    // ============================================================
+    //  PDF EXPORT LOGIC
+    // ============================================================
+    function waitForImage(img) {
+      return new Promise(resolve => {
+        if (img.complete && img.naturalWidth > 0) resolve();
+        else if (img.complete && img.naturalWidth === 0) resolve(); // resolves if broken
+        else {
+          img.addEventListener('load',  resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        }
+      });
+    }
+
+    function waitForQR() {
+      return new Promise(resolve => {
+        const check = () => {
+          if (qrContainer.querySelector('img') || qrContainer.querySelector('canvas')) resolve();
+          else setTimeout(check, 50);
+        };
+        check();
+      });
+    }
+
+    async function exportPDF() {
+      const btn      = document.getElementById('exportBtn');
+      const btnLabel = btn.querySelector('span');
+      const original = btnLabel.textContent;
+
+      btn.disabled = true;
+      btnLabel.textContent = 'Preparing…';
+      btn.style.visibility = 'hidden';
+
+      const cert = document.getElementById('certificate');
+      const originalTransform = cert.style.transform;
+      cert.style.transform = 'none';
+
+      try {
+        const img = document.getElementById('paintingImg');
+        await waitForImage(img);
+        await waitForQR();
+        await new Promise(r => setTimeout(r, 300));
+
+        const opt = {
+          margin: 0,
+          filename: 'fine-art-authenticity-certificate.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: {
+            scale: 3,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#f7f1e3',
+            logging: false,
+            onclone: function(clonedDoc) {
+              clonedDoc.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                el.style.backgroundColor = 'transparent';
+                el.style.boxShadow = 'none';
+              });
+              const overlay = clonedDoc.querySelector('.upload-overlay');
+              if (overlay) overlay.style.display = 'none';
+            }
+          },
+          jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'landscape',
+            compress: true
+          }
+        };
+
+        await html2pdf().set(opt).from(cert).save();
+      } catch (err) {
+        console.error('PDF export failed:', err);
+        alert('PDF export failed: ' + err.message);
+      } finally {
+        cert.style.transform = originalTransform;
+        btn.style.visibility = 'visible';
+        btn.disabled = false;
+        btnLabel.textContent = original;
+      }
+    }
+  </script>
+</body>
+</html>
