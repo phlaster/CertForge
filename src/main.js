@@ -542,7 +542,8 @@ async function exportPDF() {
         height: body.style.height,
         margin: body.style.margin,
         padding: body.style.padding,
-        overflow: body.style.overflow
+        overflow: body.style.overflow,
+        zoom: body.style.zoom 
     };
     const originalCertStyle = {
         position: cert.style.position,
@@ -560,6 +561,7 @@ async function exportPDF() {
     body.style.margin = '0';
     body.style.padding = '0';
     body.style.overflow = 'hidden';
+    body.style.zoom = '1';
 
     cert.style.position = 'absolute';
     cert.style.top = '0';
@@ -781,6 +783,7 @@ async function exportPDF() {
         body.style.margin = originalBodyStyle.margin;
         body.style.padding = originalBodyStyle.padding;
         body.style.overflow = originalBodyStyle.overflow;
+        body.style.zoom = originalBodyStyle.zoom;
 
         cert.style.position = originalCertStyle.position;
         cert.style.top = originalCertStyle.top;
