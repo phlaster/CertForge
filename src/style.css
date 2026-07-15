@@ -193,6 +193,40 @@ input:checked+.slider:before {
     cursor: not-allowed;
 }
 
+/* ─── GitHub Button (Bottom Right) ────────────────────── */
+.gh-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    background: var(--frame-dark);
+    color: var(--bg-cert);
+    border: none;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease, background-color 0.5s ease, color 0.5s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    border-radius: 12px;
+    z-index: 100;
+    text-decoration: none;
+}
+
+.gh-btn:hover {
+    background: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+    color: var(--bg-cert);
+}
+
+.gh-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
 /* ─── Certificate (A4 landscape) ─────────────────────────── */
 .certificate {
     width: 297mm;
@@ -1089,6 +1123,10 @@ input:checked+.slider:before {
     }
 
     .top-bar {
+        display: none !important;
+    }
+    
+    .gh-btn {
         display: none !important;
     }
 
