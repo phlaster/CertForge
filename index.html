@@ -1263,7 +1263,7 @@
                 <div class="image-container">
                     <div class="image-frame empty" id="imageFrame">
                         <input type="file" id="fileInput" accept="image/*" hidden>
-                        <span class="image-placeholder" id="imagePlaceholder">Click to replace image</span>
+                        <span class="image-placeholder" id="imagePlaceholder">Click to add image</span>
                         <img alt="The certified painting" id="paintingImg" style="display: none;">
                         <div class="upload-overlay"></div>
                         <div class="image-loader" id="imageLoader">
@@ -1646,7 +1646,7 @@
         const paintingImg = document.getElementById('paintingImg');
         const imagePlaceholder = document.getElementById('imagePlaceholder');
         const imageCaption = document.getElementById('imageCaption');
-
+        
         imageFrame.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', async (e) => {
@@ -1696,6 +1696,7 @@
         function hideImage() {
             paintingImg.style.display = 'none';
             imagePlaceholder.style.display = 'block';
+            imagePlaceholder.textContent = 'Click to add image';
             imageCaption.style.display = 'block';
             imageFrame.classList.add('empty');
         }
@@ -1799,6 +1800,12 @@
             btn.disabled = true;
             btnLabel.textContent = 'Preparing…';
             btn.style.visibility = 'hidden';
+
+            const liveImagePlaceholder = document.getElementById('imagePlaceholder');
+            const originalPlaceholderText = liveImagePlaceholder ? liveImagePlaceholder.textContent : '';
+            if (liveImagePlaceholder) {
+                liveImagePlaceholder.textContent = 'Place for image';
+            }
 
             const html = document.documentElement;
             const body = document.body;
@@ -1970,23 +1977,23 @@
                             clonedByLines.forEach(clonedByLine => {
                                 const clonedArtist = clonedByLine.querySelector('.artist');
                                 const clonedByWord = clonedByLine.querySelector('.by-word');
-                                
+
                                 let isEmpty = true; // Assume empty by default
-                                
+
                                 if (clonedArtist) {
                                     const isPlaceholder = clonedArtist.classList.contains('placeholder-text');
                                     const currentText = (clonedArtist.innerText || '').trim();
                                     const placeholderText = clonedArtist.getAttribute('data-placeholder') || '';
-                                    
+
                                     // If it has real text (not empty, not placeholder, and doesn't have placeholder class)
                                     if (!isPlaceholder && currentText !== '' && currentText !== placeholderText) {
                                         isEmpty = false;
                                     }
                                 }
-                                
+
                                 if (isEmpty) {
                                     // Using display: none is much more reliable in html2canvas than .remove()
-                                    clonedByLine.style.display = 'none'; 
+                                    clonedByLine.style.display = 'none';
                                 } else {
                                     // Filled -> make sure it's fully solid
                                     clonedByLine.classList.remove('empty-artist');
@@ -2015,13 +2022,13 @@
                                 }
                             }
 
-                            // Swap image placeholder text to "The certified painting" for export
-                            const clonedImageFrame = clonedDoc.getElementById('imageFrame');
-                            if (clonedImageFrame && clonedImageFrame.classList.contains('empty')) {
-                                const clonedImagePlaceholder = clonedDoc.getElementById('imagePlaceholder');
-                                if (clonedImagePlaceholder) {
-                                    clonedImagePlaceholder.innerText = 'The certified painting';
-                                }
+                            // Force update the placeholder text for PDF export
+                            const clonedImagePlaceholder = clonedDoc.getElementById('imagePlaceholder');
+                            if (clonedImagePlaceholder) {
+                                // Using all three properties guarantees the text node updates for html2canvas
+                                clonedImagePlaceholder.innerHTML = 'Place for image';
+                                clonedImagePlaceholder.innerText = 'Place for image';
+                                clonedImagePlaceholder.textContent = 'Place for image';
                             }
 
                             const overlay = clonedDoc.querySelector('.upload-overlay');
@@ -2067,6 +2074,10 @@
                 if (qrLinkWrapper && qrWrapEl) {
                     qrLinkWrapper.parentNode.insertBefore(qrWrapEl, qrLinkWrapper);
                     qrLinkWrapper.remove();
+                }
+
+                if (liveImagePlaceholder) {
+                    liveImagePlaceholder.textContent = originalPlaceholderText;
                 }
 
                 btn.style.visibility = 'visible';
