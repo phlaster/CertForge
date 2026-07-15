@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Fine Art Authenticity Certificate</title>
+    <title>CertForge</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' fill='%23f7f1e3'/%3E%3Crect x='3' y='1' width='18' height='5' rx='2.5' fill='%236b5d4a'/%3E%3Crect x='3' y='18' width='18' height='5' rx='2.5' fill='%236b5d4a'/%3E%3Cpath d='M9 10h6M9 13h4' stroke='%238b7355' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M15 7l.7 1.8L17.5 9.5l-1.8.7L15 12l-.7-1.8L12.5 9.5l1.8-.7z' fill='%23c4a77d'/%3E%3Cpath d='M18 11l.5 1.2 1.2.5-1.2.5L18 14.4l-.5-1.2-1.2-.5 1.2-.5z' fill='%23c4a77d'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
@@ -55,31 +56,30 @@
             top: 24px;
             right: 28px;
             display: flex;
-            align-items: flex-start;
-            gap: 20px;
+            flex-direction: column;
+            align-items: stretch;
+            /* Stretches children to match the widest element */
+            gap: 12px;
             z-index: 100;
         }
 
-        .controls-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
         .palette-picker {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 8px 12px;
-            border-radius: 30px;
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(6px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            justify-items: center;
+            /* Centers swatches within grid cells */
         }
 
         .swatch {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             border: 2px solid transparent;
             cursor: pointer;
@@ -92,25 +92,29 @@
         }
 
         .swatch.active {
-            border-color: #333;
+            border-color: var(--text-primary);
             transform: scale(1.1);
         }
 
         .texture-toggle {
             display: flex;
             align-items: center;
+            justify-content: center;
+            /* Centers toggle content */
             gap: 10px;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 6px 14px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px 16px;
+            border-radius: 12px;
+            backdrop-filter: blur(6px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             font-family: 'Cinzel', serif;
             font-size: 9px;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: #333;
+            color: var(--text-primary);
             cursor: pointer;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            width: 100%;
         }
 
         .switch {
@@ -151,7 +155,7 @@
         }
 
         input:checked+.slider {
-            background-color: var(--frame-mid);
+            background-color: var(--frame-dark);
         }
 
         input:checked+.slider:before {
@@ -159,7 +163,7 @@
         }
 
         .export-btn {
-            background: var(--text-primary);
+            background: var(--frame-dark);
             color: var(--bg-cert);
             border: none;
             padding: 12px 22px;
@@ -172,15 +176,18 @@
             transition: all 0.3s ease, background-color 0.5s ease, color 0.5s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            /* Centers button content */
             gap: 10px;
-            box-shadow: 0 6px 18px rgba(61, 52, 42, 0.22);
-            margin-top: 4px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+            border-radius: 12px;
+            width: 100%;
         }
 
         .export-btn:hover {
-            background: var(--frame-dark);
+            background: var(--text-primary);
             transform: translateY(-1px);
-            box-shadow: 0 8px 22px rgba(61, 52, 42, 0.3);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
         }
 
         .export-btn:active {
@@ -222,7 +229,8 @@
             mix-blend-mode: multiply;
             z-index: 1;
             transition: opacity 0.4s ease;
-            background-size: 100% 100%; /* Stretches texture to prevent tiling edges */
+            background-size: 100% 100%;
+            /* Stretches texture to prevent tiling edges */
         }
 
         .certificate.no-texture .paper-texture {
@@ -551,29 +559,6 @@
             transition: color 0.5s ease;
         }
 
-        .by-line {
-            font-size: 22px;
-            color: var(--text-secondary);
-            font-style: italic;
-            transition: color 0.5s ease, opacity 0.3s ease;
-        }
-
-        .by-word {
-            transition: opacity 0.3s ease;
-        }
-
-        .by-line.empty-artist .by-word {
-            display: none;
-        }
-
-        .by-line .artist {
-            font-weight: 500;
-            font-style: normal;
-            color: var(--text-primary);
-            letter-spacing: 0.02em;
-            transition: color 0.5s ease;
-        }
-
         /* Meta List */
         .meta-container {
             grid-column: 1;
@@ -636,6 +621,7 @@
             font-size: 18px;
             color: var(--text-primary);
             font-style: italic;
+            padding-left: 10mm;
             transition: color 0.5s ease;
         }
 
@@ -679,10 +665,10 @@
         }
 
         .qr-wrap {
-            width: 20mm;
-            height: 20mm;
+            width: 25mm;
+            height: 25mm;
             background: #fff;
-            padding: 1.5mm;
+            padding: 2mm;
             box-shadow: 0 1px 3px rgba(61, 52, 42, 0.12), inset 0 0 0 0.5px rgba(61, 52, 42, 0.08);
             cursor: pointer;
             position: relative;
@@ -830,14 +816,67 @@
 
         .image-caption {
             font-family: 'Cinzel', serif;
-            font-size: 8px;
-            letter-spacing: 0.35em;
+            font-size: 12px;
+            letter-spacing: 0.25em;
             text-transform: uppercase;
             color: var(--text-muted);
             text-align: center;
-            padding-left: 0.35em;
-            display: none;
+            padding-left: 0.25em;
+            margin-top: 4mm;
             transition: color 0.5s ease;
+        }
+
+        .by-line {
+            font-size: 22px;
+            color: var(--text-secondary);
+            font-style: italic;
+            transition: color 0.5s ease, opacity 0.3s ease;
+        }
+
+        .by-word {
+            transition: opacity 0.3s ease;
+        }
+
+        .by-line.empty-artist .by-word {
+            opacity: 0.4;
+        }
+
+        .by-line .artist {
+            font-weight: 500;
+            font-style: normal;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            transition: color 0.5s ease;
+        }
+
+        .clear-image-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease, background-color 0.2s ease;
+            z-index: 6;
+        }
+
+        #regenTextureText {
+            transition: color 0.2s ease;
+            border-bottom: 1px dotted transparent;
+        }
+
+        #regenTextureText:hover {
+            color: var(--text-primary);
+            border-bottom-color: var(--text-primary);
         }
 
         .upload-overlay {
@@ -858,10 +897,11 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
+            z-index: 4;
         }
 
-        .image-frame:hover .upload-overlay {
-            opacity: 1;
+        .image-frame:not(.empty) .upload-overlay::before {
+            content: "Click to replace image";
         }
 
         .image-frame:hover .upload-overlay {
@@ -869,13 +909,53 @@
         }
 
         .image-frame.empty .upload-overlay {
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(0, 0, 0, 0.25);
             color: transparent;
         }
 
+        .image-frame:not(.empty):hover .clear-image-btn {
+            opacity: 1;
+        }
+
+        .clear-image-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* ─── Image Loader ──────────────────────────────────────── */
+        .image-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(110, 110, 110, 0.2);
+            border-top-color: var(--frame-dark);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         /* ─── Placeholder Text Styling ──────────────────────────── */
-        .placeholder-text {
-            opacity: 0.4;
+        .by-line .artist.placeholder-text {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-style: italic;
+            opacity: 0.55;
         }
 
         /* ─── Editable Fields Styling ───────────────────────────── */
@@ -1053,25 +1133,6 @@
 <body>
 
     <div class="top-bar">
-        <div class="controls-wrapper">
-            <div class="palette-picker">
-                <button class="swatch active" data-palette="1" style="background: #d8d8d8;" title="Slate Grey"></button>
-                <button class="swatch" data-palette="2" style="background: #e3dccb;" title="Classic Sepia"></button>
-                <button class="swatch" data-palette="3" style="background: #d8e0d3;" title="Sage Green"></button>
-                <button class="swatch" data-palette="4" style="background: #e6d4d6;" title="Dusty Rose"></button>
-                <button class="swatch" data-palette="5" style="background: #d4d8e0;" title="Slate Blue"></button>
-                <button class="swatch" data-palette="6" style="background: #dfd8e8;" title="Lavender Blush"></button>
-                <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
-                <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
-            </div>
-            <div class="texture-toggle">
-                <label class="switch">
-                    <input type="checkbox" id="textureCheck" checked>
-                    <span class="slider"></span>
-                </label>
-                <span>Paper Texture</span>
-            </div>
-        </div>
         <button class="export-btn" id="exportBtn" onclick="exportPDF()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -1080,6 +1141,23 @@
             </svg>
             <span>Export PDF</span>
         </button>
+        <div class="palette-picker">
+            <button class="swatch active" data-palette="1" style="background: #d8d8d8;" title="Slate Grey"></button>
+            <button class="swatch" data-palette="2" style="background: #e3dccb;" title="Classic Sepia"></button>
+            <button class="swatch" data-palette="3" style="background: #d8e0d3;" title="Sage Green"></button>
+            <button class="swatch" data-palette="4" style="background: #e6d4d6;" title="Dusty Rose"></button>
+            <button class="swatch" data-palette="5" style="background: #d4d8e0;" title="Slate Blue"></button>
+            <button class="swatch" data-palette="6" style="background: #dfd8e8;" title="Lavender Blush"></button>
+            <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
+            <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
+        </div>
+        <div class="texture-toggle">
+            <label class="switch">
+                <input type="checkbox" id="textureCheck" checked>
+                <span class="slider"></span>
+            </label>
+            <span id="regenTextureText" style="cursor: pointer; user-select: none;">Paper Texture</span>
+        </div>
     </div>
 
     <div class="certificate" id="certificate">
@@ -1138,7 +1216,7 @@
                 <div class="info-top">
                     <p class="eyebrow" contenteditable="true" spellcheck="false" data-placeholder="This is to certify the authenticity of"></p>
                     <h2 class="painting-title" contenteditable="true" spellcheck="false" data-placeholder="Artwork name"></h2>
-                    <p class="by-line"><span class="by-word">by </span><span class="artist" contenteditable="true" spellcheck="false"></span></p>
+                    <p class="by-line"><span class="by-word">by </span><span class="artist" contenteditable="true" spellcheck="false" data-placeholder="Artist name"></span></p>
                 </div>
 
                 <div class="meta-container">
@@ -1187,7 +1265,11 @@
                         <input type="file" id="fileInput" accept="image/*" hidden>
                         <span class="image-placeholder" id="imagePlaceholder">Click to replace image</span>
                         <img alt="The certified painting" id="paintingImg" style="display: none;">
-                        <div class="upload-overlay">Click to replace image</div>
+                        <div class="upload-overlay"></div>
+                        <div class="image-loader" id="imageLoader">
+                            <div class="spinner"></div>
+                        </div>
+                        <button class="clear-image-btn" id="clearImageBtn" onclick="clearImage(event)" title="Remove image">×</button>
                     </div>
                     <p class="image-caption" id="imageCaption" contenteditable="true" spellcheck="false" data-placeholder="— The certified work —"></p>
                 </div>
@@ -1210,6 +1292,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
 
     <script>
         // ============================================================
@@ -1230,21 +1313,25 @@
             noiseCanvas.width = size;
             noiseCanvas.height = size;
             const ctx = noiseCanvas.getContext('2d');
-            
+
             const color = getComputedStyle(document.documentElement).getPropertyValue('--frame-mid').trim();
-            const rgb = hexToRgb(color) || { r: 107, g: 92, b: 74 };
+            const rgb = hexToRgb(color) || {
+                r: 107,
+                g: 92,
+                b: 74
+            };
 
             ctx.clearRect(0, 0, size, size);
-            
+
             // Enable browser's bilinear interpolation to smooth out the noise naturally
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
-            
+
             // Apply a slight blur to all layers to ensure it looks like soft paper grain
             ctx.filter = 'blur(1.5px)';
 
             // Vary octaves on each switch (3 to 5 layers of detail)
-            const octaves = 1 + Math.floor(Math.random() * 5); 
+            const octaves = 1 + Math.floor(Math.random() * 5);
             const baseFreq = 100; // Starting frequency
 
             const tempCanvas = document.createElement('canvas');
@@ -1255,10 +1342,10 @@
                 const freq = baseFreq * Math.pow(2, o);
                 tempCanvas.width = freq;
                 tempCanvas.height = freq;
-                
+
                 const imgData = tempCtx.createImageData(freq, freq);
                 const d = imgData.data;
-                
+
                 const octaveAlpha = 0.2; //(0.5 / octaves) * (1 - (0.1 * o)); // Higher frequencies get slightly less opacity so the fine grain doesn't overpower
 
                 // Generate pure random pixel noise at this frequency
@@ -1297,6 +1384,16 @@
                 certElement.classList.add('no-texture');
             }
         });
+
+        // ============================================================
+        //  REGENERATE TEXTURE ON TEXT CLICK
+        // ============================================================
+        const regenTextureText = document.getElementById('regenTextureText');
+        if (regenTextureText) {
+            regenTextureText.addEventListener('click', () => {
+                generatePaperTexture();
+            });
+        }
 
         // ============================================================
         //  PALETTE PICKER LOGIC
@@ -1416,7 +1513,7 @@
                 for (const [key, value] of Object.entries(palette)) {
                     document.documentElement.style.setProperty(key, value);
                 }
-                generatePaperTexture();
+                generateQR(currentQRUrl);
             });
         });
 
@@ -1473,7 +1570,7 @@
         const byLineElement = document.querySelector('.by-line');
 
         function checkArtistName() {
-            if (artistElement.innerText.trim() === '') {
+            if (artistElement.classList.contains('placeholder-text')) {
                 byLineElement.classList.add('empty-artist');
             } else {
                 byLineElement.classList.remove('empty-artist');
@@ -1552,9 +1649,35 @@
 
         imageFrame.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if (file) {
+            if (!file) return;
+
+            const imageLoader = document.getElementById('imageLoader');
+            const isHeic = file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+
+            if (isHeic) {
+                imageLoader.style.display = 'flex'; // Show loading spinner
+                try {
+                    // Convert HEIC to JPEG blob
+                    const blob = await heic2any({
+                        blob: file,
+                        toType: 'image/jpeg',
+                        quality: 0.9
+                    });
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        paintingImg.src = event.target.result;
+                        imageLoader.style.display = 'none'; // Hide loading spinner
+                    };
+                    reader.readAsDataURL(blob);
+                } catch (err) {
+                    console.error('HEIC conversion failed:', err);
+                    alert('Sorry, this HEIC image could not be loaded. Please try a JPG or PNG.');
+                    imageLoader.style.display = 'none'; // Hide loading spinner on error
+                }
+            } else {
+                // Standard image processing for JPG, PNG, etc.
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     paintingImg.src = event.target.result;
@@ -1573,8 +1696,14 @@
         function hideImage() {
             paintingImg.style.display = 'none';
             imagePlaceholder.style.display = 'block';
-            imageCaption.style.display = 'none';
+            imageCaption.style.display = 'block';
             imageFrame.classList.add('empty');
+        }
+
+        function clearImage(e) {
+            e.stopPropagation();
+            paintingImg.removeAttribute('src');
+            hideImage();
         }
 
         paintingImg.addEventListener('load', showImage);
@@ -1591,18 +1720,19 @@
         // ============================================================
         //  QR CODE LOGIC & MODAL
         // ============================================================
-        let currentQRUrl = "https://www.google.com";
+        let currentQRUrl = "https://www.example.com";
         const qrContainer = document.getElementById('qrcode');
         const qrModalOverlay = document.getElementById('qrModalOverlay');
         const qrUrlInput = document.getElementById('qrUrlInput');
 
         function generateQR(url) {
             qrContainer.innerHTML = '';
+            const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-dark').trim() || '#4a4a4a';
             new QRCode(qrContainer, {
                 text: url,
-                width: 80,
-                height: 80,
-                colorDark: "#3d342a",
+                width: 120,
+                height: 120,
+                colorDark: darkColor,
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.M
             });
@@ -1619,7 +1749,7 @@
 
         function saveQRLink() {
             let url = qrUrlInput.value.trim();
-            if (!url) url = "https://www.google.com";
+            if (!url) url = "https://www.example.com";
             currentQRUrl = url;
             generateQR(currentQRUrl);
             closeQRModal();
@@ -1641,8 +1771,12 @@
                 } else if (img.complete && img.naturalWidth > 0) {
                     resolve();
                 } else {
-                    img.addEventListener('load', resolve, { once: true });
-                    img.addEventListener('error', resolve, { once: true });
+                    img.addEventListener('load', resolve, {
+                        once: true
+                    });
+                    img.addEventListener('error', resolve, {
+                        once: true
+                    });
                 }
             });
         }
@@ -1720,6 +1854,17 @@
             body.style.width = certWidth + 'px';
             body.style.height = certHeight + 'px';
 
+            // Wrap QR code in hyperlink for clickable PDF link
+            const qrWrapEl = document.getElementById('qrWrap');
+            let qrLinkWrapper = null;
+            if (qrWrapEl && currentQRUrl) {
+                qrLinkWrapper = document.createElement('a');
+                qrLinkWrapper.href = currentQRUrl;
+                qrLinkWrapper.style.cssText = 'text-decoration: none; color: inherit; display: inline-block;';
+                qrWrapEl.parentNode.insertBefore(qrLinkWrapper, qrWrapEl);
+                qrLinkWrapper.appendChild(qrWrapEl);
+            }
+
             try {
                 const img = document.getElementById('paintingImg');
                 await waitForImage(img);
@@ -1736,6 +1881,7 @@
 
                 const opt = {
                     margin: 0,
+                    enableLinks: true,
                     filename: 'fine-art-authenticity-certificate.pdf',
                     image: {
                         type: 'jpeg',
@@ -1819,37 +1965,69 @@
                             clonedDoc.querySelectorAll('.arch').forEach(el => el.style.borderColor = frameMidColor);
                             clonedDoc.querySelectorAll('.dot').forEach(el => el.style.backgroundColor = frameMidColor);
 
-                            // Handle the Artist name: hide by-line entirely when empty
-                            const clonedArtist = clonedDoc.querySelector('.by-line .artist');
-                            const clonedByWord = clonedDoc.querySelector('.by-line .by-word');
-                            const clonedByLine = clonedDoc.querySelector('.by-line');
-                            if (clonedArtist && clonedByWord && clonedByLine) {
-                                if (clonedArtist.innerText.trim() === '') {
-                                    clonedByLine.style.display = 'none';
+                            // Handle the Artist name: completely hide from PDF if empty
+                            const clonedByLines = clonedDoc.querySelectorAll('.by-line');
+                            clonedByLines.forEach(clonedByLine => {
+                                const clonedArtist = clonedByLine.querySelector('.artist');
+                                const clonedByWord = clonedByLine.querySelector('.by-word');
+                                
+                                let isEmpty = true; // Assume empty by default
+                                
+                                if (clonedArtist) {
+                                    const isPlaceholder = clonedArtist.classList.contains('placeholder-text');
+                                    const currentText = (clonedArtist.innerText || '').trim();
+                                    const placeholderText = clonedArtist.getAttribute('data-placeholder') || '';
+                                    
+                                    // If it has real text (not empty, not placeholder, and doesn't have placeholder class)
+                                    if (!isPlaceholder && currentText !== '' && currentText !== placeholderText) {
+                                        isEmpty = false;
+                                    }
+                                }
+                                
+                                if (isEmpty) {
+                                    // Using display: none is much more reliable in html2canvas than .remove()
+                                    clonedByLine.style.display = 'none'; 
                                 } else {
+                                    // Filled -> make sure it's fully solid
                                     clonedByLine.classList.remove('empty-artist');
-                                    clonedByWord.style.opacity = '1';
+                                    if (clonedByWord) clonedByWord.style.opacity = '1';
+                                    if (clonedArtist) {
+                                        clonedArtist.style.opacity = '1';
+                                        clonedArtist.classList.remove('placeholder-text');
+                                    }
+                                }
+                            });
+
+                            // Sanitize all images to prevent html2canvas fetch errors
+                            // This removes any <img> with an empty or missing src (which defaults to the page URL)
+                            clonedDoc.querySelectorAll('img').forEach(el => {
+                                if (!el.getAttribute('src') || el.src === window.location.href) {
+                                    el.remove();
+                                }
+                            });
+
+                            // Explicitly remove the painting image if it's hidden or missing a valid src
+                            const clonedPaintingImg = clonedDoc.getElementById('paintingImg');
+                            if (clonedPaintingImg) {
+                                const hasValidSrc = clonedPaintingImg.getAttribute('src') && clonedPaintingImg.src !== window.location.href;
+                                if (clonedPaintingImg.style.display === 'none' || !hasValidSrc) {
+                                    clonedPaintingImg.remove();
                                 }
                             }
 
                             // Swap image placeholder text to "The certified painting" for export
-                            // and remove the empty img tag to prevent html2canvas fetch errors
                             const clonedImageFrame = clonedDoc.getElementById('imageFrame');
                             if (clonedImageFrame && clonedImageFrame.classList.contains('empty')) {
                                 const clonedImagePlaceholder = clonedDoc.getElementById('imagePlaceholder');
                                 if (clonedImagePlaceholder) {
                                     clonedImagePlaceholder.innerText = 'The certified painting';
                                 }
-                                const clonedPaintingImg = clonedDoc.getElementById('paintingImg');
-                                if (clonedPaintingImg) {
-                                    clonedPaintingImg.remove();
-                                }
                             }
 
                             const overlay = clonedDoc.querySelector('.upload-overlay');
                             if (overlay) overlay.style.display = 'none';
 
-                            clonedDoc.querySelectorAll('.meta-delete-btn, .meta-add-btn').forEach(el => el.style.display = 'none');
+                            clonedDoc.querySelectorAll('.meta-delete-btn, .meta-add-btn, .clear-image-btn').forEach(el => el.style.display = 'none');
                             clonedDoc.querySelectorAll('.meta-row').forEach(el => el.style.gridTemplateColumns = '42mm 1fr');
                         }
                     },
@@ -1884,6 +2062,12 @@
                 cert.style.left = originalCertStyle.left;
                 cert.style.transform = originalCertStyle.transform;
                 cert.style.boxShadow = originalCertStyle.boxShadow;
+
+                // Unwrap QR code from hyperlink
+                if (qrLinkWrapper && qrWrapEl) {
+                    qrLinkWrapper.parentNode.insertBefore(qrWrapEl, qrLinkWrapper);
+                    qrLinkWrapper.remove();
+                }
 
                 btn.style.visibility = 'visible';
                 btn.disabled = false;
