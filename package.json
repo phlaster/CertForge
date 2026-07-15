@@ -1,0 +1,20 @@
+{
+  "name": "sonya_cert",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "type": "module",
+  "devDependencies": {
+    "vite": "^8.1.4"
+  },
+  "dependencies": {
+    "heic2any": "^0.0.4",
+    "html2pdf.js": "^0.14.0",
+    "qrcode": "^1.5.4"
+  }
+}
