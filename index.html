@@ -1,941 +1,1854 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Fine Art Authenticity Certificate</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-page:        #e3dccb;
-    --bg-cert:        #f7f1e3;
-    --bg-cert-warm:   #f1e7d2;
-    --frame-dark:     #6b5d4a;
-    --frame-mid:      #8b7355;
-    --frame-light:    #c4a77d;
-    --accent-sage:    #7d8b6f;
-    --text-primary:   #3d342a;
-    --text-secondary: #5a4a3a;
-    --text-muted:     #8b7355;
-    --paper-shadow:   rgba(61, 52, 42, 0.18);
-    --edit-hover:     rgba(196, 167, 125, 0.15);
-    --edit-focus:     rgba(196, 167, 125, 0.25);
-  }
+    <meta charset="UTF-8">
+    <title>Fine Art Authenticity Certificate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #e3dccb;
+            --bg-cert: #f7f1e3;
+            --bg-cert-warm: #f1e7d2;
+            --frame-dark: #6b5d4a;
+            --frame-mid: #8b7355;
+            --frame-light: #c4a77d;
+            --accent-sage: #7d8b6f;
+            --text-primary: #3d342a;
+            --text-secondary: #5a4a3a;
+            --text-muted: #8b7355;
+            --paper-shadow: rgba(61, 52, 42, 0.18);
+            --edit-hover: rgba(196, 167, 125, 0.15);
+            --edit-focus: rgba(196, 167, 125, 0.25);
+        }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  html, body {
-    background: var(--bg-page);
-    font-family: 'Cormorant Garamond', 'Times New Roman', serif;
-    color: var(--text-primary);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    transition: background-color 0.5s ease;
-  }
+        html,
+        body {
+            background: var(--bg-page);
+            font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.5s ease;
+        }
 
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-    position: relative;
-    overflow-x: auto;
-  }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            position: relative;
+            overflow-x: auto;
+        }
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background-color: var(--bg-page);
-    pointer-events: none;
-    z-index: 0;
-    transition: background-color 0.5s ease;
-  }
+        /* ─── Top Bar (Palette + Toggle + Export) ───────────────── */
+        .top-bar {
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            z-index: 100;
+        }
 
-  /* ─── Top Bar (Palette + Export) ────────────────────────── */
-  .top-bar {
-    position: fixed;
-    top: 24px;
-    right: 28px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-  }
+        .controls-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
 
-  .palette-picker {
-    display: flex;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.4);
-    padding: 8px 12px;
-    border-radius: 30px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  }
+        .palette-picker {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 8px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
 
-  .swatch {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-    padding: 0;
-  }
-  .swatch:hover { transform: scale(1.15); }
-  .swatch.active { border-color: #333; transform: scale(1.1); }
+        .swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            padding: 0;
+        }
 
-  .export-btn {
-    background: var(--text-primary);
-    color: var(--bg-cert);
-    border: none;
-    padding: 12px 22px;
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease, background-color 0.5s ease, color 0.5s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 6px 18px rgba(61, 52, 42, 0.22);
-  }
-  .export-btn:hover {
-    background: var(--frame-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 22px rgba(61, 52, 42, 0.3);
-  }
-  .export-btn:active { transform: translateY(0); }
-  .export-btn svg { width: 13px; height: 13px; }
-  .export-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .swatch:hover {
+            transform: scale(1.15);
+        }
 
-  /* ─── Certificate (A4 landscape) ────────────────────────── */
-  .certificate {
-    width: 297mm;
-    height: 210mm;
-    background: var(--bg-cert);
-    position: relative;
-    box-shadow:
-      0 24px 60px var(--paper-shadow),
-      0 6px 18px rgba(61, 52, 42, 0.12);
-    flex-shrink: 0;
-    transition: background-color 0.5s ease;
-  }
+        .swatch.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
 
-  /* Frame */
-  .frame-outer {
-    position: absolute;
-    top: 6mm; right: 6mm; bottom: 6mm; left: 6mm;
-    border: 1px solid var(--frame-mid);
-    pointer-events: none;
-    z-index: 2;
-    transition: border-color 0.5s ease;
-  }
-  .frame-inner {
-    position: absolute;
-    top: 9mm; right: 9mm; bottom: 9mm; left: 9mm;
-    border: 0.5px solid var(--frame-light);
-    pointer-events: none;
-    z-index: 2;
-    transition: border-color 0.5s ease;
-  }
+        .texture-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #333;
+            cursor: pointer;
+        }
 
-  /* ─── Corner Ornaments (Pure CSS for perfect PDF export) ── */
-  .corner {
-    position: absolute;
-    width: 14mm;
-    height: 14mm;
-    z-index: 3;
-    pointer-events: none;
-  }
-  .corner-tl { top: 4mm; left: 4mm; }
-  .corner-tr { top: 4mm; right: 4mm; }
-  .corner-bl { bottom: 4mm; left: 4mm; }
-  .corner-br { bottom: 4mm; right: 4mm; }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 28px;
+            height: 14px;
+        }
 
-  .arch {
-    position: absolute;
-    border-color: var(--frame-mid);
-    border-style: solid;
-    border-width: 0;
-    transition: border-color 0.5s ease;
-  }
-  .arch.outer { width: 7.7mm; height: 7.7mm; }
-  .arch.inner { width: 5.25mm; height: 5.25mm; }
-  .dot {
-    position: absolute;
-    width: 0.8mm;
-    height: 0.8mm;
-    background-color: var(--frame-mid);
-    border-radius: 50%;
-    transition: background-color 0.5s ease;
-  }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-  /* TL Corner */
-  .corner-tl .arch.outer { top: 0; left: 0; border-width: 1px 0 0 1px; border-top-left-radius: 7.7mm; }
-  .corner-tl .arch.inner { top: 2.45mm; left: 2.45mm; border-width: 0.5px 0 0 0.5px; border-top-left-radius: 5.25mm; }
-  .corner-tl .dot1 { top: 0; left: 7.7mm; margin-top: -0.4mm; margin-left: -0.4mm; }
-  .corner-tl .dot2 { top: 7.7mm; left: 0; margin-top: -0.4mm; margin-left: -0.4mm; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 14px;
+        }
 
-  /* TR Corner */
-  .corner-tr .arch.outer { top: 0; right: 0; border-width: 1px 1px 0 0; border-top-right-radius: 7.7mm; }
-  .corner-tr .arch.inner { top: 2.45mm; right: 2.45mm; border-width: 0.5px 0.5px 0 0; border-top-right-radius: 5.25mm; }
-  .corner-tr .dot1 { top: 0; right: 7.7mm; margin-top: -0.4mm; margin-right: -0.4mm; }
-  .corner-tr .dot2 { top: 7.7mm; right: 0; margin-top: -0.4mm; margin-right: -0.4mm; }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 10px;
+            width: 10px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
 
-  /* BL Corner */
-  .corner-bl .arch.outer { bottom: 0; left: 0; border-width: 0 0 1px 1px; border-bottom-left-radius: 7.7mm; }
-  .corner-bl .arch.inner { bottom: 2.45mm; left: 2.45mm; border-width: 0 0 0.5px 0.5px; border-bottom-left-radius: 5.25mm; }
-  .corner-bl .dot1 { bottom: 0; left: 7.7mm; margin-bottom: -0.4mm; margin-left: -0.4mm; }
-  .corner-bl .dot2 { bottom: 7.7mm; left: 0; margin-bottom: -0.4mm; margin-left: -0.4mm; }
+        input:checked+.slider {
+            background-color: var(--frame-mid);
+        }
 
-  /* BR Corner */
-  .corner-br .arch.outer { bottom: 0; right: 0; border-width: 0 1px 1px 0; border-bottom-right-radius: 7.7mm; }
-  .corner-br .arch.inner { bottom: 2.45mm; right: 2.45mm; border-width: 0 0.5px 0.5px 0; border-bottom-right-radius: 5.25mm; }
-  .corner-br .dot1 { bottom: 0; right: 7.7mm; margin-bottom: -0.4mm; margin-right: -0.4mm; }
-  .corner-br .dot2 { bottom: 7.7mm; right: 0; margin-bottom: -0.4mm; margin-right: -0.4mm; }
+        input:checked+.slider:before {
+            transform: translateX(14px);
+        }
 
-  /* ─── Inner content ─────────────────────────────────────── */
-  .certificate__inner {
-    position: absolute;
-    top: 14mm; right: 14mm; bottom: 14mm; left: 14mm;
-    padding: 4mm 6mm;
-    display: flex;
-    flex-direction: column;
-    z-index: 4;
-  }
+        .export-btn {
+            background: var(--text-primary);
+            color: var(--bg-cert);
+            border: none;
+            padding: 12px 22px;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease, background-color 0.5s ease, color 0.5s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 18px rgba(61, 52, 42, 0.22);
+            margin-top: 4px;
+        }
 
-  /* Header */
-  .cert-header {
-    text-align: center;
-    margin-bottom: 3mm;
-  }
-  
-  .ornament-top {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 3mm;
-  }
-  .orn-line {
-    width: 60px;
-    height: 1px;
-    background: var(--frame-mid);
-    transition: background-color 0.5s ease;
-  }
-  .orn-circle-outer {
-    width: 6px;
-    height: 6px;
-    border: 1px solid var(--frame-mid);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.5s ease;
-  }
-  .orn-circle-inner {
-    width: 2px;
-    height: 2px;
-    background: var(--frame-mid);
-    border-radius: 50%;
-    transition: background-color 0.5s ease;
-  }
+        .export-btn:hover {
+            background: var(--frame-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(61, 52, 42, 0.3);
+        }
 
-  .cert-header h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 32px; 
-    font-weight: 500;
-    letter-spacing: 0.35em;
-    color: var(--text-primary);
-    text-transform: uppercase;
-    padding-left: 0.35em;
-    line-height: 1.2;
-    transition: color 0.5s ease;
-  }
+        .export-btn:active {
+            transform: translateY(0);
+        }
 
-  .header-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 4mm auto 0;
-    max-width: 100mm;
-  }
-  .header-divider .line {
-    width: 60px;
-    height: 1px;
-    background: var(--frame-mid);
-    transition: background-color 0.5s ease;
-  }
-  .header-divider .diamond {
-    width: 5px; height: 5px;
-    background: var(--frame-mid);
-    transform: rotate(45deg);
-    transition: background-color 0.5s ease;
-  }
+        .export-btn svg {
+            width: 13px;
+            height: 13px;
+        }
 
-  /* ─── Body Grid ─────────────────────────────────────────── */
-  .cert-body {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto minmax(0, 1fr) auto; 
-    column-gap: 14mm;
-    padding-top: 2mm;
-    min-height: 0;
-  }
+        .export-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-  /* ─── Left Column Items ─────────────────────────────────── */
-  .info-top {
-    grid-column: 1;
-    grid-row: 1;
-    text-align: center;
-    padding-bottom: 4mm;
-  }
+        /* ─── Certificate (A4 landscape) ─────────────────────────── */
+        .certificate {
+            width: 297mm;
+            height: 210mm;
+            background: var(--bg-cert);
+            position: relative;
+            box-shadow:
+                0 24px 60px var(--paper-shadow),
+                0 6px 18px rgba(61, 52, 42, 0.12);
+            flex-shrink: 0;
+            transition: background-color 0.5s ease;
+        }
 
-  .eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 4mm;
-    padding-left: 0.3em;
-    transition: color 0.5s ease;
-  }
+        /* Subtle paper-grain noise */
+        .paper-texture {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.35;
+            mix-blend-mode: multiply;
+            z-index: 1;
+            transition: opacity 0.4s ease;
+        }
 
-  .painting-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 34px;
-    line-height: 1.1;
-    color: var(--text-primary);
-    margin-bottom: 3mm;
-    transition: color 0.5s ease;
-  }
+        .certificate.no-texture .paper-texture {
+            opacity: 0;
+        }
 
-  .by-line {
-    font-size: 22px; 
-    color: var(--text-secondary);
-    font-style: italic;
-    transition: color 0.5s ease;
-  }
-  .by-line .artist {
-    font-weight: 500;
-    font-style: normal;
-    color: var(--text-primary);
-    letter-spacing: 0.02em;
-    transition: color 0.5s ease;
-  }
+        /* Frame */
+        .frame-outer {
+            position: absolute;
+            top: 6mm;
+            right: 6mm;
+            bottom: 6mm;
+            left: 6mm;
+            border: 1px solid var(--frame-mid);
+            pointer-events: none;
+            z-index: 2;
+            transition: border-color 0.5s ease;
+        }
 
-  .meta-list {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: center; 
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  .meta-row {
-    display: grid;
-    grid-template-columns: 42mm 1fr; 
-    align-items: baseline;
-    padding: 3mm 0; 
-    border-bottom: 0.5px solid rgba(196, 167, 125, 0.55);
-  }
-  .meta-row:last-child { border-bottom: none; }
-  .meta-row dt {
-    font-family: 'Cinzel', serif;
-    font-size: 11px; 
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 500;
-    padding-left: 0.22em;
-    transition: color 0.5s ease;
-  }
-  .meta-row dd {
-    font-size: 18px; 
-    color: var(--text-primary);
-    font-style: italic;
-    transition: color 0.5s ease;
-  }
+        .frame-inner {
+            position: absolute;
+            top: 9mm;
+            right: 9mm;
+            bottom: 9mm;
+            left: 9mm;
+            border: 0.5px solid var(--frame-light);
+            pointer-events: none;
+            z-index: 2;
+            transition: border-color 0.5s ease;
+        }
 
-  /* Bottom Left Area */
-  .cert-bottom-left {
-    grid-column: 1;
-    grid-row: 3;
-    align-self: end;
-    display: flex;
-    align-items: flex-end;
-    gap: 8mm; 
-    padding-top: 8mm;
-  }
+        /* ─── Corner Ornaments (Pure CSS) ───────────────────────── */
+        .corner {
+            position: absolute;
+            width: 14mm;
+            height: 14mm;
+            z-index: 3;
+            pointer-events: none;
+        }
 
-  .qr-block {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2mm;
-  }
-  .qr-eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    padding-left: 0.3em;
-    transition: color 0.5s ease;
-  }
-  .qr-wrap {
-    width: 20mm;
-    height: 20mm;
-    background: #fff;
-    padding: 1.5mm;
-    box-shadow:
-      0 1px 3px rgba(61, 52, 42, 0.12),
-      inset 0 0 0 0.5px rgba(61, 52, 42, 0.08);
-  }
-  #qrcode { width: 100%; height: 100%; }
-  #qrcode img, #qrcode canvas {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-  }
-  .qr-label {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    color: var(--text-primary);
-    letter-spacing: 0.08em;
-    transition: color 0.5s ease;
-  }
+        .corner-tl {
+            top: 4mm;
+            left: 4mm;
+        }
 
-  .signatures {
-    flex: 1;
-    max-width: 90mm; 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6mm; 
-  }
-  .sign-field { display: flex; flex-direction: column; }
-  .sign-line {
-    height: 12mm;
-    border-bottom: 0.5px solid var(--frame-mid);
-    transition: border-color 0.5s ease;
-  }
-  .sign-label {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-top: 2mm;
-    padding-left: 0.25em;
-    white-space: nowrap; 
-    transition: color 0.5s ease;
-  }
+        .corner-tr {
+            top: 4mm;
+            right: 4mm;
+        }
 
-  /* ─── Right Column Items ────────────────────────────────── */
-  .image-container {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: center;
-    justify-self: center;
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    max-height: 115mm; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4mm;
-  }
-  
-  .image-frame {
-    background: #fff;
-    padding: 5mm;
-    box-shadow:
-      0 1px 2px rgba(61, 52, 42, 0.08),
-      0 6px 18px rgba(61, 52, 42, 0.15),
-      inset 0 0 0 0.5px rgba(61, 52, 42, 0.12);
-    position: relative;
-    cursor: pointer;
-    transition: min-width 0.4s ease, min-height 0.4s ease, box-shadow 0.3s ease;
-    
-    display: inline-block; 
-    max-width: 100%;
-    line-height: 0; 
-    font-size: 0;
-  }
+        .corner-bl {
+            bottom: 4mm;
+            left: 4mm;
+        }
 
-  .image-frame.empty {
-    min-width: 120mm;
-    min-height: 80mm;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    line-height: 1.5;
-  }
+        .corner-br {
+            bottom: 4mm;
+            right: 4mm;
+        }
 
-  .image-frame:hover {
-    box-shadow:
-      0 1px 2px rgba(61, 52, 42, 0.08),
-      0 12px 28px rgba(61, 52, 42, 0.25),
-      inset 0 0 0 1px rgba(61, 52, 42, 0.3);
-  }
-  
-  .image-frame img {
-    display: block;
-    max-width: 100%;
-    max-height: 85mm; 
-    width: auto;
-    height: auto;
-  }
+        .arch {
+            position: absolute;
+            border-color: var(--frame-mid);
+            border-style: solid;
+            border-width: 0;
+            transition: border-color 0.5s ease;
+        }
 
-  .image-placeholder {
-    font-family: 'Cinzel', serif;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 0 10px;
-    transition: color 0.5s ease;
-  }
+        .arch.outer {
+            width: 7.7mm;
+            height: 7.7mm;
+        }
 
-  .image-caption {
-    font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: center;
-    padding-left: 0.35em;
-    display: none; 
-    transition: color 0.5s ease;
-  }
-  
-  .upload-overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(61, 52, 42, 0.55);
-    color: #f7f1e3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-  .image-frame:hover .upload-overlay { opacity: 1; }
+        .arch.inner {
+            width: 5.25mm;
+            height: 5.25mm;
+        }
 
-  /* ─── Editable Fields Styling ───────────────────────────── */
-  [contenteditable="true"] {
-    outline: none;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.5s ease;
-    border-radius: 2px;
-    padding: 0 4px;
-    margin: 0 -4px;
-    cursor: text;
-  }
-  [contenteditable="true"]:hover { background-color: var(--edit-hover); }
-  [contenteditable="true"]:focus {
-    background-color: var(--edit-focus);
-    box-shadow: inset 0 0 0 1px rgba(139, 115, 85, 0.3);
-  }
+        .dot {
+            position: absolute;
+            width: 0.8mm;
+            height: 0.8mm;
+            background-color: var(--frame-mid);
+            border-radius: 50%;
+            transition: background-color 0.5s ease;
+        }
 
-  /* Responsive scale */
-  @media (max-width: 1280px) { .certificate { transform: scale(0.85); transform-origin: center center; } }
-  @media (max-width: 1050px) { .certificate { transform: scale(0.7);  } }
-  @media (max-width: 850px)  { .certificate { transform: scale(0.55); } }
-  @media (max-width: 650px)  { .certificate { transform: scale(0.4);  } }
+        .corner-tl .arch.outer {
+            top: 0;
+            left: 0;
+            border-width: 1px 0 0 1px;
+            border-top-left-radius: 7.7mm;
+        }
 
-  @media print {
-    body { background: white; padding: 0; display: block; }
-    body::before { display: none; }
-    .top-bar { display: none !important; }
-    .certificate { box-shadow: none; transform: none; }
-    [contenteditable="true"] { background-color: transparent !important; box-shadow: none !important; }
-    .upload-overlay { display: none !important; }
-  }
-</style>
+        .corner-tl .arch.inner {
+            top: 2.45mm;
+            left: 2.45mm;
+            border-width: 0.5px 0 0 0.5px;
+            border-top-left-radius: 5.25mm;
+        }
+
+        .corner-tl .dot1 {
+            top: 0;
+            left: 7.7mm;
+            margin-top: -0.4mm;
+            margin-left: -0.4mm;
+        }
+
+        .corner-tl .dot2 {
+            top: 7.7mm;
+            left: 0;
+            margin-top: -0.4mm;
+            margin-left: -0.4mm;
+        }
+
+        .corner-tr .arch.outer {
+            top: 0;
+            right: 0;
+            border-width: 1px 1px 0 0;
+            border-top-right-radius: 7.7mm;
+        }
+
+        .corner-tr .arch.inner {
+            top: 2.45mm;
+            right: 2.45mm;
+            border-width: 0.5px 0.5px 0 0;
+            border-top-right-radius: 5.25mm;
+        }
+
+        .corner-tr .dot1 {
+            top: 0;
+            right: 7.7mm;
+            margin-top: -0.4mm;
+            margin-right: -0.4mm;
+        }
+
+        .corner-tr .dot2 {
+            top: 7.7mm;
+            right: 0;
+            margin-top: -0.4mm;
+            margin-right: -0.4mm;
+        }
+
+        .corner-bl .arch.outer {
+            bottom: 0;
+            left: 0;
+            border-width: 0 0 1px 1px;
+            border-bottom-left-radius: 7.7mm;
+        }
+
+        .corner-bl .arch.inner {
+            bottom: 2.45mm;
+            left: 2.45mm;
+            border-width: 0 0 0.5px 0.5px;
+            border-bottom-left-radius: 5.25mm;
+        }
+
+        .corner-bl .dot1 {
+            bottom: 0;
+            left: 7.7mm;
+            margin-bottom: -0.4mm;
+            margin-left: -0.4mm;
+        }
+
+        .corner-bl .dot2 {
+            bottom: 7.7mm;
+            left: 0;
+            margin-bottom: -0.4mm;
+            margin-left: -0.4mm;
+        }
+
+        .corner-br .arch.outer {
+            bottom: 0;
+            right: 0;
+            border-width: 0 1px 1px 0;
+            border-bottom-right-radius: 7.7mm;
+        }
+
+        .corner-br .arch.inner {
+            bottom: 2.45mm;
+            right: 2.45mm;
+            border-width: 0 0.5px 0.5px 0;
+            border-bottom-right-radius: 5.25mm;
+        }
+
+        .corner-br .dot1 {
+            bottom: 0;
+            right: 7.7mm;
+            margin-bottom: -0.4mm;
+            margin-right: -0.4mm;
+        }
+
+        .corner-br .dot2 {
+            bottom: 7.7mm;
+            right: 0;
+            margin-bottom: -0.4mm;
+            margin-right: -0.4mm;
+        }
+
+        /* ─── Inner content ─────────────────────────────────────── */
+        .certificate__inner {
+            position: absolute;
+            top: 14mm;
+            right: 14mm;
+            bottom: 14mm;
+            left: 14mm;
+            padding: 4mm 6mm;
+            display: flex;
+            flex-direction: column;
+            z-index: 4;
+        }
+
+        /* Header */
+        .cert-header {
+            text-align: center;
+            margin-bottom: 3mm;
+        }
+
+        .ornament-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 3mm;
+        }
+
+        .orn-line {
+            width: 60px;
+            height: 1px;
+            background: var(--frame-mid);
+            transition: background-color 0.5s ease;
+        }
+
+        .orn-circle-outer {
+            width: 6px;
+            height: 6px;
+            border: 1px solid var(--frame-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.5s ease;
+        }
+
+        .orn-circle-inner {
+            width: 2px;
+            height: 2px;
+            background: var(--frame-mid);
+            border-radius: 50%;
+            transition: background-color 0.5s ease;
+        }
+
+        .cert-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            font-weight: 500;
+            letter-spacing: 0.35em;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            padding-left: 0.35em;
+            line-height: 1.2;
+            transition: color 0.5s ease;
+        }
+
+        .header-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 4mm auto 0;
+            max-width: 100mm;
+        }
+
+        .header-divider .line {
+            width: 60px;
+            height: 1px;
+            background: var(--frame-mid);
+            transition: background-color 0.5s ease;
+        }
+
+        .header-divider .diamond {
+            width: 5px;
+            height: 5px;
+            background: var(--frame-mid);
+            transform: rotate(45deg);
+            transition: background-color 0.5s ease;
+        }
+
+        /* ─── Body Grid ─────────────────────────────────────────── */
+        .cert-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+            column-gap: 14mm;
+            padding-top: 2mm;
+            min-height: 0;
+        }
+
+        .info-top {
+            grid-column: 1;
+            grid-row: 1;
+            text-align: center;
+            padding-bottom: 4mm;
+        }
+
+        .eyebrow {
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4mm;
+            padding-left: 0.3em;
+            transition: color 0.5s ease;
+        }
+
+        .painting-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 34px;
+            line-height: 1.1;
+            color: var(--text-primary);
+            margin-bottom: 3mm;
+            transition: color 0.5s ease;
+        }
+
+        .by-line {
+            font-size: 22px;
+            color: var(--text-secondary);
+            font-style: italic;
+            transition: color 0.5s ease;
+        }
+
+        .by-word {
+            transition: opacity 0.3s ease;
+        }
+
+        .by-line.empty-artist .by-word {
+            opacity: 0.25;
+        }
+
+        .by-line.empty-artist .artist::before {
+            content: "Artist name";
+            color: var(--text-muted);
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .by-line .artist {
+            font-weight: 500;
+            font-style: normal;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            transition: color 0.5s ease;
+        }
+
+        /* Meta List */
+        .meta-container {
+            grid-column: 1;
+            grid-row: 2;
+            align-self: center;
+            width: 100%;
+        }
+
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .meta-row {
+            display: grid;
+            grid-template-columns: 6mm 42mm 1fr;
+            align-items: baseline;
+            padding: 3mm 0;
+            border-bottom: 0.5px solid rgba(196, 167, 125, 0.55);
+        }
+
+        .meta-row:last-child {
+            border-bottom: none;
+        }
+
+        .meta-delete-btn {
+            width: 5mm;
+            height: 5mm;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            opacity: 0.4;
+            align-self: center;
+            line-height: 1;
+            transition: opacity 0.2s, color 0.5s ease;
+        }
+
+        .meta-delete-btn:hover {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+
+        .meta-row dt {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding-left: 0.22em;
+            transition: color 0.5s ease;
+        }
+
+        .meta-row dd {
+            font-size: 18px;
+            color: var(--text-primary);
+            font-style: italic;
+            transition: color 0.5s ease;
+        }
+
+        .meta-add-btn {
+            margin-top: 4mm;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 2mm 0;
+            opacity: 0.7;
+            transition: opacity 0.2s, color 0.5s ease;
+        }
+
+        .meta-add-btn:hover {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+
+        /* Bottom Left Area */
+        .cert-bottom-left {
+            grid-column: 1;
+            grid-row: 3;
+            align-self: end;
+            display: flex;
+            align-items: flex-end;
+            gap: 8mm;
+            padding-top: 8mm;
+        }
+
+        .qr-block {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2mm;
+        }
+
+        .qr-wrap {
+            width: 20mm;
+            height: 20mm;
+            background: #fff;
+            padding: 1.5mm;
+            box-shadow: 0 1px 3px rgba(61, 52, 42, 0.12), inset 0 0 0 0.5px rgba(61, 52, 42, 0.08);
+            cursor: pointer;
+            position: relative;
+            margin-top: 4mm;
+        }
+
+        .qr-wrap::after {
+            content: "Click to set link";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 4px;
+            background: var(--text-primary);
+            color: var(--bg-cert);
+            padding: 4px 8px;
+            font-size: 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .qr-wrap:hover::after {
+            opacity: 1;
+        }
+
+        #qrcode {
+            width: 100%;
+            height: 100%;
+        }
+
+        #qrcode img,
+        #qrcode canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+
+        .qr-label {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            color: var(--text-primary);
+            letter-spacing: 0.08em;
+            transition: color 0.5s ease;
+            margin-top: 2mm;
+        }
+
+        .signatures {
+            flex: 1;
+            max-width: 90mm;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6mm;
+        }
+
+        .sign-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sign-line {
+            height: 12mm;
+            border-bottom: 0.5px solid var(--frame-mid);
+            transition: border-color 0.5s ease;
+        }
+
+        .sign-label {
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 2mm;
+            padding-left: 0.25em;
+            white-space: nowrap;
+            transition: color 0.5s ease;
+        }
+
+        /* ─── Right Column Items ────────────────────────────────── */
+        .image-container {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: center;
+            justify-self: center;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            max-height: 115mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4mm;
+        }
+
+        .image-frame {
+            background: #fff;
+            padding: 5mm;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(61, 52, 42, 0.08), 0 6px 18px rgba(61, 52, 42, 0.15),
+                inset 0 0 0 0.5px rgba(61, 52, 42, 0.12);
+            transition: min-width 0.4s ease, min-height 0.4s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            max-width: 100%;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .image-frame.empty {
+            min-width: 120mm;
+            min-height: 80mm;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .image-frame:hover {
+            box-shadow: 0 1px 2px rgba(61, 52, 42, 0.08), 0 12px 28px rgba(61, 52, 42, 0.25),
+                inset 0 0 0 1px rgba(61, 52, 42, 0.3);
+        }
+
+        .image-frame img {
+            display: block;
+            max-width: 100%;
+            max-height: 85mm;
+            width: auto;
+            height: auto;
+        }
+
+        .image-placeholder {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 0 10px;
+            transition: color 0.5s ease;
+        }
+
+        .image-caption {
+            font-family: 'Cinzel', serif;
+            font-size: 8px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-align: center;
+            padding-left: 0.35em;
+            display: none;
+            transition: color 0.5s ease;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(61, 52, 42, 0.55);
+            color: #f7f1e3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .image-frame:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        /* ─── Placeholder Text Styling ──────────────────────────── */
+        .placeholder-text {
+            opacity: 0.4;
+        }
+
+        /* ─── Editable Fields Styling ───────────────────────────── */
+        [contenteditable="true"] {
+            outline: none;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.5s ease;
+            border-radius: 2px;
+            padding: 0 4px;
+            margin: 0 -4px;
+            cursor: text;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: var(--edit-hover);
+        }
+
+        [contenteditable="true"]:focus {
+            background-color: var(--edit-focus);
+            box-shadow: inset 0 0 0 1px rgba(139, 115, 85, 0.3);
+        }
+
+        /* ─── QR Modal Popup ────────────────────────────────────── */
+        .qr-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            backdrop-filter: blur(4px);
+        }
+
+        .qr-modal-overlay.active {
+            display: flex;
+        }
+
+        .qr-modal {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            font-family: 'Cinzel', serif;
+            position: relative;
+        }
+
+        .qr-modal h3 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .qr-modal input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: sans-serif;
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .qr-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .qr-modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-cancel {
+            background: #eee;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #ddd;
+        }
+
+        .btn-save {
+            background: var(--text-primary);
+            color: #fff;
+        }
+
+        .btn-save:hover {
+            background: var(--frame-dark);
+        }
+
+        /* Responsive scale */
+        @media (max-width: 1280px) {
+            .certificate {
+                transform: scale(0.85);
+                transform-origin: center center;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .certificate {
+                transform: scale(0.7);
+            }
+        }
+
+        @media (max-width: 850px) {
+            .certificate {
+                transform: scale(0.55);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .certificate {
+                transform: scale(0.4);
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                display: block;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .top-bar {
+                display: none !important;
+            }
+
+            .certificate {
+                box-shadow: none;
+                transform: none;
+            }
+
+            [contenteditable="true"] {
+                background-color: transparent !important;
+                box-shadow: none !important;
+            }
+
+            .upload-overlay,
+            .qr-wrap::after {
+                display: none !important;
+            }
+
+            .meta-delete-btn,
+            .meta-add-btn {
+                display: none !important;
+            }
+
+            .meta-row {
+                grid-template-columns: 42mm 1fr !important;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="top-bar">
-    <div class="palette-picker">
-      <button class="swatch active" data-palette="1" style="background: #e3dccb;" title="Classic Sepia"></button>
-      <button class="swatch" data-palette="2" style="background: #d8e0d3;" title="Sage Green"></button>
-      <button class="swatch" data-palette="3" style="background: #e6d4d6;" title="Dusty Rose"></button>
-      <button class="swatch" data-palette="4" style="background: #d4d8e0;" title="Slate Blue"></button>
-      <button class="swatch" data-palette="5" style="background: #dfd8e8;" title="Lavender Blush"></button>
-      <button class="swatch" data-palette="6" style="background: #e6dfc8;" title="Golden Ochre"></button>
-      <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
-      <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
-    </div>
-    <button class="export-btn" id="exportBtn" onclick="exportPDF()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      <span>Export PDF</span>
-    </button>
-  </div>
-
-  <div class="certificate" id="certificate">
-
-    <!-- Frame lines -->
-    <div class="frame-outer"></div>
-    <div class="frame-inner"></div>
-
-    <!-- Corner ornaments -->
-    <div class="corner corner-tl">
-      <div class="arch outer"></div>
-      <div class="arch inner"></div>
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-    </div>
-    <div class="corner corner-tr">
-      <div class="arch outer"></div>
-      <div class="arch inner"></div>
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-    </div>
-    <div class="corner corner-bl">
-      <div class="arch outer"></div>
-      <div class="arch inner"></div>
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-    </div>
-    <div class="corner corner-br">
-      <div class="arch outer"></div>
-      <div class="arch inner"></div>
-      <div class="dot dot1"></div>
-      <div class="dot dot2"></div>
-    </div>
-
-    <div class="certificate__inner">
-
-      <header class="cert-header">
-        <div class="ornament-top">
-          <div class="orn-line"></div>
-          <div class="orn-circle-outer"><div class="orn-circle-inner"></div></div>
-          <div class="orn-line"></div>
-        </div>
-        <h1 contenteditable="true" spellcheck="false">Fine Art Authenticity Certificate</h1>
-        <div class="header-divider">
-          <span class="line"></span>
-          <span class="diamond"></span>
-          <span class="line"></span>
-        </div>
-      </header>
-
-      <main class="cert-body">
-
-        <!-- Left Column -->
-        <div class="info-top">
-          <p class="eyebrow">This is to certify the authenticity of</p>
-          <h2 class="painting-title" contenteditable="true" spellcheck="false">Edit artwork name</h2>
-          <p class="by-line">by <span class="artist" contenteditable="true" spellcheck="false">Edit artist name</span></p>
-        </div>
-
-        <dl class="meta-list">
-          <div class="meta-row">
-            <dt>Year of creation</dt>
-            <dd contenteditable="true" spellcheck="false">edit year</dd>
-          </div>
-          <div class="meta-row">
-            <dt>Technique</dt>
-            <dd contenteditable="true" spellcheck="false">edit technique</dd>
-          </div>
-          <div class="meta-row">
-            <dt>Dimensions</dt>
-            <dd contenteditable="true" spellcheck="false">edit dimensions</dd>
-          </div>
-        </dl>
-
-        <div class="cert-bottom-left">
-          <div class="qr-block">
-            <span class="qr-eyebrow">Follow the artist</span>
-            <div class="qr-wrap"><div id="qrcode"></div></div>
-            <span class="qr-label" contenteditable="true" spellcheck="false">@username</span>
-          </div>
-          
-          <div class="signatures">
-            <div class="sign-field">
-              <div class="sign-line"></div>
-              <p class="sign-label">Artist's signature</p>
+    <div class="top-bar">
+        <div class="controls-wrapper">
+            <div class="palette-picker">
+                <button class="swatch active" data-palette="1" style="background: #e3dccb;" title="Classic Sepia"></button>
+                <button class="swatch" data-palette="2" style="background: #d8e0d3;" title="Sage Green"></button>
+                <button class="swatch" data-palette="3" style="background: #e6d4d6;" title="Dusty Rose"></button>
+                <button class="swatch" data-palette="4" style="background: #d4d8e0;" title="Slate Blue"></button>
+                <button class="swatch" data-palette="5" style="background: #dfd8e8;" title="Lavender Blush"></button>
+                <button class="swatch" data-palette="6" style="background: #e6dfc8;" title="Golden Ochre"></button>
+                <button class="swatch" data-palette="7" style="background: #e5d6cc;" title="Terracotta"></button>
+                <button class="swatch" data-palette="8" style="background: #cce0df;" title="Teal Mist"></button>
             </div>
-            <div class="sign-field">
-              <div class="sign-line"></div>
-              <p class="sign-label">Date signed</p>
+            <div class="texture-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="textureCheck" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Paper Texture</span>
             </div>
-          </div>
         </div>
-
-        <!-- Right Column -->
-        <div class="image-container">
-          <div class="image-frame empty" id="imageFrame">
-            <input type="file" id="fileInput" accept="image/*" hidden>
-            <span class="image-placeholder" id="imagePlaceholder">The certified painting</span>
-            <img src="" alt="The certified painting" id="paintingImg" style="display: none;">
-            <div class="upload-overlay">Click to replace image</div>
-          </div>
-          <p class="image-caption" id="imageCaption">— The certified work —</p>
-        </div>
-
-      </main>
+        <button class="export-btn" id="exportBtn" onclick="exportPDF()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span>Export PDF</span>
+        </button>
     </div>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <div class="certificate" id="certificate">
 
-  <script>
-    // ============================================================
-    //  PALETTE PICKER LOGIC
-    // ============================================================
-    const palettes = {
-      1: { // Classic Sepia
-        '--bg-page': '#e3dccb', '--bg-cert': '#f7f1e3', '--bg-cert-warm': '#f1e7d2',
-        '--frame-dark': '#6b5d4a', '--frame-mid': '#8b7355', '--frame-light': '#c4a77d',
-        '--text-primary': '#3d342a', '--text-secondary': '#5a4a3a', '--text-muted': '#8b7355',
-        '--edit-hover': 'rgba(196, 167, 125, 0.15)', '--edit-focus': 'rgba(196, 167, 125, 0.25)'
-      },
-      2: { // Sage Green
-        '--bg-page': '#d8e0d3', '--bg-cert': '#f2f6ef', '--bg-cert-warm': '#e4ede0',
-        '--frame-dark': '#4d6147', '--frame-mid': '#6f8b6a', '--frame-light': '#a3bd9e',
-        '--text-primary': '#2d3a2a', '--text-secondary': '#455a40', '--text-muted': '#6f8b6a',
-        '--edit-hover': 'rgba(111, 139, 106, 0.15)', '--edit-focus': 'rgba(111, 139, 106, 0.25)'
-      },
-      3: { // Dusty Rose
-        '--bg-page': '#e6d4d6', '--bg-cert': '#f9f0f1', '--bg-cert-warm': '#f0dde0',
-        '--frame-dark': '#7a525a', '--frame-mid': '#a87882', '--frame-light': '#d4adb4',
-        '--text-primary': '#42272c', '--text-secondary': '#6b404a', '--text-muted': '#a87882',
-        '--edit-hover': 'rgba(168, 120, 130, 0.15)', '--edit-focus': 'rgba(168, 120, 130, 0.25)'
-      },
-      4: { // Slate Blue
-        '--bg-page': '#d4d8e0', '--bg-cert': '#eef0f6', '--bg-cert-warm': '#e0e3ec',
-        '--frame-dark': '#4a526a', '--frame-mid': '#6a7591', '--frame-light': '#a0aac0',
-        '--text-primary': '#2a2e3d', '--text-secondary': '#404a60', '--text-muted': '#6a7591',
-        '--edit-hover': 'rgba(106, 117, 145, 0.15)', '--edit-focus': 'rgba(106, 117, 145, 0.25)'
-      },
-      5: { // Lavender Blush
-        '--bg-page': '#dfd8e8', '--bg-cert': '#f5f1fa', '--bg-cert-warm': '#ebe3f2',
-        '--frame-dark': '#5a4b6e', '--frame-mid': '#8270a0', '--frame-light': '#b8a8ce',
-        '--text-primary': '#332a44', '--text-secondary': '#4d4063', '--text-muted': '#8270a0',
-        '--edit-hover': 'rgba(130, 112, 160, 0.15)', '--edit-focus': 'rgba(130, 112, 160, 0.25)'
-      },
-      6: { // Golden Ochre
-        '--bg-page': '#e6dfc8', '--bg-cert': '#f8f4e6', '--bg-cert-warm': '#efe9d4',
-        '--frame-dark': '#6e623a', '--frame-mid': '#9b8a52', '--frame-light': '#cab98c',
-        '--text-primary': '#3f3a20', '--text-secondary': '#5e5430', '--text-muted': '#9b8a52',
-        '--edit-hover': 'rgba(155, 138, 82, 0.15)', '--edit-focus': 'rgba(155, 138, 82, 0.25)'
-      },
-      7: { // Terracotta
-        '--bg-page': '#e5d6cc', '--bg-cert': '#f6ece5', '--bg-cert-warm': '#eddfd4',
-        '--frame-dark': '#725142', '--frame-mid': '#a17558', '--frame-light': '#d4a98e',
-        '--text-primary': '#402a20', '--text-secondary': '#624230', '--text-muted': '#a17558',
-        '--edit-hover': 'rgba(161, 117, 88, 0.15)', '--edit-focus': 'rgba(161, 117, 88, 0.25)'
-      },
-      8: { // Teal Mist
-        '--bg-page': '#cce0df', '--bg-cert': '#ecf6f5', '--bg-cert-warm': '#d8ecea',
-        '--frame-dark': '#3a6b68', '--frame-mid': '#588f8c', '--frame-light': '#8fbab7',
-        '--text-primary': '#1f3836', '--text-secondary': '#2d4e4b', '--text-muted': '#588f8c',
-        '--edit-hover': 'rgba(88, 143, 140, 0.15)', '--edit-focus': 'rgba(88, 143, 140, 0.25)'
-      }
-    };
+        <!-- Subtle paper-grain noise layer -->
+        <div class="paper-texture" id="paperTexture"></div>
 
-    document.querySelectorAll('.swatch').forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        const palette = palettes[swatch.dataset.palette];
-        for (const [key, value] of Object.entries(palette)) {
-          document.documentElement.style.setProperty(key, value);
+        <div class="frame-outer"></div>
+        <div class="frame-inner"></div>
+
+        <div class="corner corner-tl">
+            <div class="arch outer"></div>
+            <div class="arch inner"></div>
+            <div class="dot dot1"></div>
+            <div class="dot dot2"></div>
+        </div>
+        <div class="corner corner-tr">
+            <div class="arch outer"></div>
+            <div class="arch inner"></div>
+            <div class="dot dot1"></div>
+            <div class="dot dot2"></div>
+        </div>
+        <div class="corner corner-bl">
+            <div class="arch outer"></div>
+            <div class="arch inner"></div>
+            <div class="dot dot1"></div>
+            <div class="dot dot2"></div>
+        </div>
+        <div class="corner corner-br">
+            <div class="arch outer"></div>
+            <div class="arch inner"></div>
+            <div class="dot dot1"></div>
+            <div class="dot dot2"></div>
+        </div>
+
+        <div class="certificate__inner">
+
+            <header class="cert-header">
+                <div class="ornament-top">
+                    <div class="orn-line"></div>
+                    <div class="orn-circle-outer">
+                        <div class="orn-circle-inner"></div>
+                    </div>
+                    <div class="orn-line"></div>
+                </div>
+                <h1 contenteditable="true" spellcheck="false" data-placeholder="Fine Art Authenticity Certificate"></h1>
+                <div class="header-divider">
+                    <span class="line"></span>
+                    <span class="diamond"></span>
+                    <span class="line"></span>
+                </div>
+            </header>
+
+            <main class="cert-body">
+
+                <div class="info-top">
+                    <p class="eyebrow" contenteditable="true" spellcheck="false" data-placeholder="This is to certify the authenticity of"></p>
+                    <h2 class="painting-title" contenteditable="true" spellcheck="false" data-placeholder="Artwork name"></h2>
+                    <p class="by-line"><span class="by-word">by </span><span class="artist" contenteditable="true" spellcheck="false"></span></p>
+                </div>
+
+                <div class="meta-container">
+                    <dl class="meta-list" id="metaList">
+                        <div class="meta-row">
+                            <button class="meta-delete-btn" onclick="removeMetaRow(this)">×</button>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                        </div>
+                        <div class="meta-row">
+                            <button class="meta-delete-btn" onclick="removeMetaRow(this)">×</button>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                        </div>
+                        <div class="meta-row">
+                            <button class="meta-delete-btn" onclick="removeMetaRow(this)">×</button>
+                            <dt contenteditable="true" spellcheck="false" data-placeholder="New detail"></dt>
+                            <dd contenteditable="true" spellcheck="false" data-placeholder="enter value"></dd>
+                        </div>
+                    </dl>
+                    <button class="meta-add-btn" id="metaAddBtn" onclick="addMetaRow()">+ Add detail</button>
+                </div>
+
+                <div class="cert-bottom-left">
+                    <div class="qr-block">
+                        <div class="qr-wrap" id="qrWrap" onclick="openQRModal()">
+                            <div id="qrcode"></div>
+                        </div>
+                        <span class="qr-label" contenteditable="true" spellcheck="false" data-placeholder="Social"></span>
+                    </div>
+
+                    <div class="signatures">
+                        <div class="sign-field">
+                            <div class="sign-line"></div>
+                            <p class="sign-label">Artist's signature</p>
+                        </div>
+                        <div class="sign-field">
+                            <div class="sign-line"></div>
+                            <p class="sign-label">Date signed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-container">
+                    <div class="image-frame empty" id="imageFrame">
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <span class="image-placeholder" id="imagePlaceholder">The certified painting</span>
+                        <img src="" alt="The certified painting" id="paintingImg" style="display: none;">
+                        <div class="upload-overlay">Click to replace image</div>
+                    </div>
+                    <p class="image-caption" id="imageCaption" contenteditable="true" spellcheck="false" data-placeholder="— The certified work —"></p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- QR Link Popup Modal -->
+    <div class="qr-modal-overlay" id="qrModalOverlay">
+        <div class="qr-modal">
+            <h3>Set QR Code Link</h3>
+            <input type="text" id="qrUrlInput" placeholder="Enter full URL (https://...)">
+            <div class="qr-modal-actions">
+                <button class="qr-modal-btn btn-cancel" onclick="closeQRModal()">Cancel</button>
+                <button class="qr-modal-btn btn-save" onclick="saveQRLink()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        // ============================================================
+        //  PAPER TEXTURE GENERATOR (Canvas to PNG for perfect PDF export)
+        // ============================================================
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
         }
-      });
-    });
 
-    // ============================================================
-    //  IMAGE UPLOAD & LOAD LOGIC
-    // ============================================================
-    const imageFrame = document.getElementById('imageFrame');
-    const fileInput = document.getElementById('fileInput');
-    const paintingImg = document.getElementById('paintingImg');
-    const imagePlaceholder = document.getElementById('imagePlaceholder');
-    const imageCaption = document.getElementById('imageCaption');
+        function generatePaperTexture() {
+            const noiseCanvas = document.createElement('canvas');
+            noiseCanvas.width = 200;
+            noiseCanvas.height = 200;
+            const ctx = noiseCanvas.getContext('2d');
+            const imageData = ctx.createImageData(200, 200);
+            const data = imageData.data;
 
-    imageFrame.addEventListener('click', () => fileInput.click());
-    
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          paintingImg.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+            const color = getComputedStyle(document.documentElement).getPropertyValue('--frame-mid').trim();
+            const rgb = hexToRgb(color) || {
+                r: 107,
+                g: 92,
+                b: 74
+            };
 
-    function showImage() {
-      paintingImg.style.display = 'block';
-      imagePlaceholder.style.display = 'none';
-      imageCaption.style.display = 'block';
-      imageFrame.classList.remove('empty'); 
-    }
-
-    function hideImage() {
-      paintingImg.style.display = 'none';
-      imagePlaceholder.style.display = 'block';
-      imageCaption.style.display = 'none';
-      imageFrame.classList.add('empty'); 
-    }
-
-    paintingImg.addEventListener('load', showImage);
-    paintingImg.addEventListener('error', hideImage);
-
-    if (paintingImg.complete && paintingImg.naturalWidth > 0) {
-      showImage();
-    } else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
-      hideImage();
-    } else {
-      hideImage(); 
-    }
-
-    // ============================================================
-    //  QR CODE LOGIC
-    // ============================================================
-    const handleElement = document.querySelector('.qr-label');
-    const qrContainer = document.getElementById('qrcode');
-
-    function generateQR(url) {
-      qrContainer.innerHTML = ''; 
-      new QRCode(qrContainer, {
-        text: url,
-        width: 80,
-        height: 80,
-        colorDark: "#3d342a",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    }
-
-    function updateQR() {
-      let handle = handleElement.innerText.trim().replace(/^@/, '');
-      if (!handle) handle = "instagram.com"; 
-      const url = `https://www.instagram.com/${handle}`;
-      generateQR(url);
-    }
-
-    updateQR();
-    handleElement.addEventListener('input', updateQR);
-
-    document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') e.preventDefault();
-      });
-      el.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        document.execCommand('insertText', false, text);
-      });
-    });
-
-    // ============================================================
-    //  PDF EXPORT LOGIC
-    // ============================================================
-    function waitForImage(img) {
-      return new Promise(resolve => {
-        if (img.complete && img.naturalWidth > 0) resolve();
-        else if (img.complete && img.naturalWidth === 0) resolve(); 
-        else {
-          img.addEventListener('load',  resolve, { once: true });
-          img.addEventListener('error', resolve, { once: true });
-        }
-      });
-    }
-
-    function waitForQR() {
-      return new Promise(resolve => {
-        const check = () => {
-          if (qrContainer.querySelector('img') || qrContainer.querySelector('canvas')) resolve();
-          else setTimeout(check, 50);
-        };
-        check();
-      });
-    }
-
-    async function exportPDF() {
-      const btn      = document.getElementById('exportBtn');
-      const btnLabel = btn.querySelector('span');
-      const original = btnLabel.textContent;
-
-      btn.disabled = true;
-      btnLabel.textContent = 'Preparing…';
-      btn.style.visibility = 'hidden';
-
-      const cert = document.getElementById('certificate');
-      const originalTransform = cert.style.transform;
-      cert.style.transform = 'none';
-
-      try {
-        const img = document.getElementById('paintingImg');
-        await waitForImage(img);
-        await waitForQR();
-        await new Promise(r => setTimeout(r, 300));
-
-        const opt = {
-          margin: 0,
-          filename: 'fine-art-authenticity-certificate.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: {
-            scale: 3,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-cert').trim(),
-            logging: false,
-            onclone: function(clonedDoc) {
-              clonedDoc.querySelectorAll('[contenteditable="true"]').forEach(el => {
-                el.style.backgroundColor = 'transparent';
-                el.style.boxShadow = 'none';
-              });
-              const overlay = clonedDoc.querySelector('.upload-overlay');
-              if (overlay) overlay.style.display = 'none';
+            for (let i = 0; i < data.length; i += 4) {
+                const val = Math.random();
+                data[i] = rgb.r;
+                data[i + 1] = rgb.g;
+                data[i + 2] = rgb.b;
+                data[i + 3] = val * 102;
             }
-          },
-          jsPDF: {
-            unit: 'mm',
-            format: 'a4',
-            orientation: 'landscape',
-            compress: true
-          }
+            ctx.putImageData(imageData, 0, 0);
+
+            const textureDiv = document.getElementById('paperTexture');
+            textureDiv.style.backgroundImage = `url(${noiseCanvas.toDataURL()})`;
+        }
+
+        generatePaperTexture();
+
+        // ============================================================
+        //  TEXTURE TOGGLE LOGIC
+        // ============================================================
+        const textureCheck = document.getElementById('textureCheck');
+        const certElement = document.getElementById('certificate');
+        textureCheck.addEventListener('change', () => {
+            if (textureCheck.checked) {
+                certElement.classList.remove('no-texture');
+            } else {
+                certElement.classList.add('no-texture');
+            }
+        });
+
+        // ============================================================
+        //  PALETTE PICKER LOGIC
+        // ============================================================
+        const palettes = {
+            1: {
+                '--bg-page': '#e3dccb',
+                '--bg-cert': '#f7f1e3',
+                '--bg-cert-warm': '#f1e7d2',
+                '--frame-dark': '#6b5d4a',
+                '--frame-mid': '#8b7355',
+                '--frame-light': '#c4a77d',
+                '--text-primary': '#3d342a',
+                '--text-secondary': '#5a4a3a',
+                '--text-muted': '#8b7355',
+                '--edit-hover': 'rgba(196, 167, 125, 0.15)',
+                '--edit-focus': 'rgba(196, 167, 125, 0.25)'
+            },
+            2: {
+                '--bg-page': '#d8e0d3',
+                '--bg-cert': '#f2f6ef',
+                '--bg-cert-warm': '#e4ede0',
+                '--frame-dark': '#4d6147',
+                '--frame-mid': '#6f8b6a',
+                '--frame-light': '#a3bd9e',
+                '--text-primary': '#2d3a2a',
+                '--text-secondary': '#455a40',
+                '--text-muted': '#6f8b6a',
+                '--edit-hover': 'rgba(111, 139, 106, 0.15)',
+                '--edit-focus': 'rgba(111, 139, 106, 0.25)'
+            },
+            3: {
+                '--bg-page': '#e6d4d6',
+                '--bg-cert': '#f9f0f1',
+                '--bg-cert-warm': '#f0dde0',
+                '--frame-dark': '#7a525a',
+                '--frame-mid': '#a87882',
+                '--frame-light': '#d4adb4',
+                '--text-primary': '#42272c',
+                '--text-secondary': '#6b404a',
+                '--text-muted': '#a87882',
+                '--edit-hover': 'rgba(168, 120, 130, 0.15)',
+                '--edit-focus': 'rgba(168, 120, 130, 0.25)'
+            },
+            4: {
+                '--bg-page': '#d4d8e0',
+                '--bg-cert': '#eef0f6',
+                '--bg-cert-warm': '#e0e3ec',
+                '--frame-dark': '#4a526a',
+                '--frame-mid': '#6a7591',
+                '--frame-light': '#a0aac0',
+                '--text-primary': '#2a2e3d',
+                '--text-secondary': '#404a60',
+                '--text-muted': '#6a7591',
+                '--edit-hover': 'rgba(106, 117, 145, 0.15)',
+                '--edit-focus': 'rgba(106, 117, 145, 0.25)'
+            },
+            5: {
+                '--bg-page': '#dfd8e8',
+                '--bg-cert': '#f5f1fa',
+                '--bg-cert-warm': '#ebe3f2',
+                '--frame-dark': '#5a4b6e',
+                '--frame-mid': '#8270a0',
+                '--frame-light': '#b8a8ce',
+                '--text-primary': '#332a44',
+                '--text-secondary': '#4d4063',
+                '--text-muted': '#8270a0',
+                '--edit-hover': 'rgba(130, 112, 160, 0.15)',
+                '--edit-focus': 'rgba(130, 112, 160, 0.25)'
+            },
+            6: {
+                '--bg-page': '#e6dfc8',
+                '--bg-cert': '#f8f4e6',
+                '--bg-cert-warm': '#efe9d4',
+                '--frame-dark': '#6e623a',
+                '--frame-mid': '#9b8a52',
+                '--frame-light': '#cab98c',
+                '--text-primary': '#3f3a20',
+                '--text-secondary': '#5e5430',
+                '--text-muted': '#9b8a52',
+                '--edit-hover': 'rgba(155, 138, 82, 0.15)',
+                '--edit-focus': 'rgba(155, 138, 82, 0.25)'
+            },
+            7: {
+                '--bg-page': '#e5d6cc',
+                '--bg-cert': '#f6ece5',
+                '--bg-cert-warm': '#eddfd4',
+                '--frame-dark': '#725142',
+                '--frame-mid': '#a17558',
+                '--frame-light': '#d4a98e',
+                '--text-primary': '#402a20',
+                '--text-secondary': '#624230',
+                '--text-muted': '#a17558',
+                '--edit-hover': 'rgba(161, 117, 88, 0.15)',
+                '--edit-focus': 'rgba(161, 117, 88, 0.25)'
+            },
+            8: {
+                '--bg-page': '#cce0df',
+                '--bg-cert': '#ecf6f5',
+                '--bg-cert-warm': '#d8ecea',
+                '--frame-dark': '#3a6b68',
+                '--frame-mid': '#588f8c',
+                '--frame-light': '#8fbab7',
+                '--text-primary': '#1f3836',
+                '--text-secondary': '#2d4e4b',
+                '--text-muted': '#588f8c',
+                '--edit-hover': 'rgba(88, 143, 140, 0.15)',
+                '--edit-focus': 'rgba(88, 143, 140, 0.25)'
+            }
         };
 
-        await html2pdf().set(opt).from(cert).save();
-      } catch (err) {
-        console.error('PDF export failed:', err);
-        alert('PDF export failed: ' + err.message);
-      } finally {
-        cert.style.transform = originalTransform;
-        btn.style.visibility = 'visible';
-        btn.disabled = false;
-        btnLabel.textContent = original;
-      }
-    }
-  </script>
+        document.querySelectorAll('.swatch').forEach(swatch => {
+            swatch.addEventListener('click', () => {
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+                swatch.classList.add('active');
+                const palette = palettes[swatch.dataset.palette];
+                for (const [key, value] of Object.entries(palette)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
+                generatePaperTexture();
+            });
+        });
+
+        // ============================================================
+        //  PLACEHOLDER LOGIC
+        // ============================================================
+        function applyPlaceholderBehavior(el) {
+            const placeholder = el.getAttribute('data-placeholder');
+            if (!placeholder) return;
+
+            // Initial set
+            if (el.innerText.trim() === '') {
+                el.innerText = placeholder;
+                el.classList.add('placeholder-text');
+            }
+
+            el.addEventListener('focus', () => {
+                if (el.classList.contains('placeholder-text')) {
+                    el.innerText = '';
+                    el.classList.remove('placeholder-text');
+                }
+            });
+
+            el.addEventListener('blur', () => {
+                if (el.innerText.trim() === '') {
+                    el.innerText = placeholder;
+                    el.classList.add('placeholder-text');
+                }
+            });
+
+            // Prevent line breaks
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') e.preventDefault();
+            });
+
+            // Strip formatting on paste
+            el.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text');
+                if (el.classList.contains('placeholder-text')) {
+                    el.innerText = '';
+                    el.classList.remove('placeholder-text');
+                }
+                document.execCommand('insertText', false, text);
+            });
+        }
+
+        document.querySelectorAll('[data-placeholder]').forEach(applyPlaceholderBehavior);
+
+        // ============================================================
+        //  ARTIST NAME LOGIC
+        // ============================================================
+        const artistElement = document.querySelector('.by-line .artist');
+        const byLineElement = document.querySelector('.by-line');
+
+        function checkArtistName() {
+            if (artistElement.innerText.trim() === '') {
+                byLineElement.classList.add('empty-artist');
+            } else {
+                byLineElement.classList.remove('empty-artist');
+            }
+        }
+
+        artistElement.addEventListener('blur', checkArtistName);
+        artistElement.addEventListener('input', checkArtistName);
+        checkArtistName();
+
+        // ============================================================
+        //  META LIST LOGIC
+        // ============================================================
+        const metaList = document.getElementById('metaList');
+        const metaAddBtn = document.getElementById('metaAddBtn');
+
+        function updateMetaAddBtn() {
+            const rows = metaList.querySelectorAll('.meta-row').length;
+            metaAddBtn.style.display = rows >= 5 ? 'none' : 'block';
+        }
+
+        function addMetaRow() {
+            if (metaList.querySelectorAll('.meta-row').length >= 5) return;
+
+            const row = document.createElement('div');
+            row.className = 'meta-row';
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'meta-delete-btn';
+            delBtn.innerHTML = '×';
+            delBtn.onclick = function() {
+                removeMetaRow(this);
+            };
+
+            const dt = document.createElement('dt');
+            dt.contentEditable = true;
+            dt.spellcheck = false;
+            dt.setAttribute('data-placeholder', 'New detail');
+
+            const dd = document.createElement('dd');
+            dd.contentEditable = true;
+            dd.spellcheck = false;
+            dd.setAttribute('data-placeholder', 'enter value');
+
+            row.appendChild(delBtn);
+            row.appendChild(dt);
+            row.appendChild(dd);
+
+            metaList.appendChild(row);
+
+            // Apply placeholder behavior to new elements
+            applyPlaceholderBehavior(dt);
+            applyPlaceholderBehavior(dd);
+
+            updateMetaAddBtn();
+        }
+
+        function removeMetaRow(btn) {
+            const row = btn.closest('.meta-row');
+            if (row) {
+                row.remove();
+                updateMetaAddBtn();
+            }
+        }
+
+        updateMetaAddBtn();
+
+        // ============================================================
+        //  IMAGE UPLOAD & LOAD LOGIC
+        // ============================================================
+        const imageFrame = document.getElementById('imageFrame');
+        const fileInput = document.getElementById('fileInput');
+        const paintingImg = document.getElementById('paintingImg');
+        const imagePlaceholder = document.getElementById('imagePlaceholder');
+        const imageCaption = document.getElementById('imageCaption');
+
+        imageFrame.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    paintingImg.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function showImage() {
+            paintingImg.style.display = 'block';
+            imagePlaceholder.style.display = 'none';
+            imageCaption.style.display = 'block';
+            imageFrame.classList.remove('empty');
+        }
+
+        function hideImage() {
+            paintingImg.style.display = 'none';
+            imagePlaceholder.style.display = 'block';
+            imageCaption.style.display = 'none';
+            imageFrame.classList.add('empty');
+        }
+
+        paintingImg.addEventListener('load', showImage);
+        paintingImg.addEventListener('error', hideImage);
+
+        if (paintingImg.complete && paintingImg.naturalWidth > 0) {
+            showImage();
+        } else if (paintingImg.complete && paintingImg.naturalWidth === 0) {
+            hideImage();
+        } else {
+            hideImage();
+        }
+
+        // ============================================================
+        //  QR CODE LOGIC & MODAL
+        // ============================================================
+        let currentQRUrl = "https://www.google.com";
+        const qrContainer = document.getElementById('qrcode');
+        const qrModalOverlay = document.getElementById('qrModalOverlay');
+        const qrUrlInput = document.getElementById('qrUrlInput');
+
+        function generateQR(url) {
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: url,
+                width: 80,
+                height: 80,
+                colorDark: "#3d342a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        function openQRModal() {
+            qrUrlInput.value = currentQRUrl;
+            qrModalOverlay.classList.add('active');
+        }
+
+        function closeQRModal() {
+            qrModalOverlay.classList.remove('active');
+        }
+
+        function saveQRLink() {
+            let url = qrUrlInput.value.trim();
+            if (!url) url = "https://www.google.com";
+            currentQRUrl = url;
+            generateQR(currentQRUrl);
+            closeQRModal();
+        }
+
+        generateQR(currentQRUrl);
+
+        qrModalOverlay.addEventListener('click', (e) => {
+            if (e.target === qrModalOverlay) closeQRModal();
+        });
+
+        // ============================================================
+        //  PDF EXPORT LOGIC
+        // ============================================================
+        function waitForImage(img) {
+            return new Promise(resolve => {
+                if (img.complete && img.naturalWidth > 0) resolve();
+                else if (img.complete && img.naturalWidth === 0) resolve();
+                else {
+                    img.addEventListener('load', resolve, {
+                        once: true
+                    });
+                    img.addEventListener('error', resolve, {
+                        once: true
+                    });
+                }
+            });
+        }
+
+        function waitForQR() {
+            return new Promise(resolve => {
+                const check = () => {
+                    if (qrContainer.querySelector('img') || qrContainer.querySelector('canvas')) resolve();
+                    else setTimeout(check, 50);
+                };
+                check();
+            });
+        }
+
+        async function exportPDF() {
+            const btn = document.getElementById('exportBtn');
+            const btnLabel = btn.querySelector('span');
+            const original = btnLabel.textContent;
+
+            btn.disabled = true;
+            btnLabel.textContent = 'Preparing…';
+            btn.style.visibility = 'hidden';
+
+            const html = document.documentElement;
+            const body = document.body;
+            const cert = document.getElementById('certificate');
+
+            // 1. Save all original states to restore them later
+            const originalHtmlStyle = {
+                width: html.style.width,
+                height: html.style.height,
+                margin: html.style.margin,
+                overflow: html.style.overflow
+            };
+            const originalBodyStyle = {
+                display: body.style.display,
+                width: body.style.width,
+                height: body.style.height,
+                margin: body.style.margin,
+                padding: body.style.padding,
+                overflow: body.style.overflow
+            };
+            const originalCertStyle = {
+                position: cert.style.position,
+                top: cert.style.top,
+                left: cert.style.left,
+                transform: cert.style.transform,
+                boxShadow: cert.style.boxShadow
+            };
+
+            // 2. Force the live document to perfectly wrap the certificate to prevent scroll/offset calculations
+            html.style.margin = '0';
+            html.style.overflow = 'hidden';
+
+            body.style.display = 'block';
+            body.style.margin = '0';
+            body.style.padding = '0';
+            body.style.overflow = 'hidden';
+
+            cert.style.position = 'absolute';
+            cert.style.top = '0';
+            cert.style.left = '0';
+            cert.style.transform = 'none';
+            cert.style.boxShadow = 'none';
+
+            // Trigger reflow to calculate exact unscaled pixel dimensions
+            void cert.offsetWidth;
+
+            const certWidth = cert.offsetWidth;
+            const certHeight = cert.offsetHeight;
+
+            // Lock the HTML and Body to the exact certificate dimensions
+            html.style.width = certWidth + 'px';
+            html.style.height = certHeight + 'px';
+            body.style.width = certWidth + 'px';
+            body.style.height = certHeight + 'px';
+
+            try {
+                const img = document.getElementById('paintingImg');
+                await waitForImage(img);
+                await waitForQR();
+                await new Promise(r => setTimeout(r, 300));
+
+                // Resolve all CSS variables into solid color strings
+                const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-cert').trim();
+                const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+                const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
+                const frameMidColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-mid').trim();
+                const frameLightColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-light').trim();
+
+                const opt = {
+                    margin: 0,
+                    filename: 'fine-art-authenticity-certificate.pdf',
+                    image: {
+                        type: 'jpeg',
+                        quality: 0.98
+                    },
+                    html2canvas: {
+                        scale: 3,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: bgColor,
+                        logging: false,
+                        width: certWidth,
+                        height: certHeight,
+                        windowWidth: certWidth, // Force exact window size to prevent responsive scaling
+                        windowHeight: certHeight,
+                        x: 0, // Force exact top-left crop coordinates 
+                        y: 0,
+                        scrollX: 0, // Nullify scroll offsets
+                        scrollY: 0,
+                        onclone: function(clonedDoc) {
+                            const clonedHtml = clonedDoc.documentElement;
+                            const clonedBody = clonedDoc.body;
+
+                            // Apply identical locked sizing to the cloned document
+                            clonedHtml.style.width = certWidth + 'px';
+                            clonedHtml.style.height = certHeight + 'px';
+                            clonedHtml.style.margin = '0';
+                            clonedHtml.style.overflow = 'hidden';
+
+                            clonedBody.style.width = certWidth + 'px';
+                            clonedBody.style.height = certHeight + 'px';
+                            clonedBody.style.margin = '0';
+                            clonedBody.style.padding = '0';
+                            clonedBody.style.overflow = 'hidden';
+                            clonedBody.style.display = 'block';
+
+                            const clonedCert = clonedDoc.getElementById('certificate');
+                            if (clonedCert) {
+                                clonedCert.style.position = 'absolute';
+                                clonedCert.style.top = '0';
+                                clonedCert.style.left = '0';
+                                clonedCert.style.transform = 'none';
+                                clonedCert.style.margin = '0';
+                                clonedCert.style.boxShadow = 'none';
+                                clonedCert.style.backgroundColor = bgColor;
+                            }
+
+                            // Remove editing UI styles
+                            clonedDoc.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                                el.style.backgroundColor = 'transparent';
+                                el.style.boxShadow = 'none';
+                            });
+
+                            // Make all default placeholder text render with solid proper color (opacity 1)
+                            clonedDoc.querySelectorAll('.placeholder-text').forEach(el => {
+                                el.style.opacity = '1';
+                            });
+
+                            // Force solid colors to bypass html2canvas CSS variable parsing issues
+                            clonedDoc.querySelectorAll('.cert-header h1').forEach(el => el.style.color = primaryColor);
+                            clonedDoc.querySelectorAll('.eyebrow').forEach(el => el.style.color = mutedColor);
+                            clonedDoc.querySelectorAll('.painting-title').forEach(el => el.style.color = primaryColor);
+                            clonedDoc.querySelectorAll('.by-line').forEach(el => el.style.color = secondaryColor);
+                            clonedDoc.querySelectorAll('.by-line .artist').forEach(el => el.style.color = primaryColor);
+                            clonedDoc.querySelectorAll('.image-placeholder').forEach(el => el.style.color = mutedColor);
+                            clonedDoc.querySelectorAll('.image-caption').forEach(el => el.style.color = mutedColor);
+                            clonedDoc.querySelectorAll('.qr-label').forEach(el => el.style.color = primaryColor);
+                            clonedDoc.querySelectorAll('.sign-label').forEach(el => el.style.color = mutedColor);
+                            clonedDoc.querySelectorAll('.meta-row dt').forEach(el => el.style.color = mutedColor);
+                            clonedDoc.querySelectorAll('.meta-row dd').forEach(el => el.style.color = primaryColor);
+
+                            clonedDoc.querySelectorAll('.frame-outer').forEach(el => el.style.borderColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.frame-inner').forEach(el => el.style.borderColor = frameLightColor);
+                            clonedDoc.querySelectorAll('.orn-line').forEach(el => el.style.backgroundColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.orn-circle-outer').forEach(el => el.style.borderColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.orn-circle-inner').forEach(el => el.style.backgroundColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.header-divider .line').forEach(el => el.style.backgroundColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.header-divider .diamond').forEach(el => el.style.backgroundColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.sign-line').forEach(el => el.style.borderColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.arch').forEach(el => el.style.borderColor = frameMidColor);
+                            clonedDoc.querySelectorAll('.dot').forEach(el => el.style.backgroundColor = frameMidColor);
+
+                            // Handle the Artist name specifically to ensure it shows up as solid text
+                            const clonedArtist = clonedDoc.querySelector('.by-line .artist');
+                            const clonedByWord = clonedDoc.querySelector('.by-line .by-word');
+                            const clonedByLine = clonedDoc.querySelector('.by-line');
+                            if (clonedArtist && clonedByWord && clonedByLine) {
+                                if (clonedArtist.innerText.trim() === '') {
+                                    clonedByLine.classList.remove('empty-artist'); // Remove pseudo-element
+                                    clonedArtist.innerText = 'Artist name'; // Place text directly inside
+                                    clonedArtist.style.opacity = '1';
+                                    clonedArtist.style.color = mutedColor; // Use resolved color
+                                    clonedArtist.style.fontStyle = 'italic';
+                                    clonedByWord.style.opacity = '1'; // Ensure "by " is also solid
+                                } else {
+                                    clonedByLine.classList.remove('empty-artist');
+                                    clonedByWord.style.opacity = '1';
+                                }
+                            }
+
+                            const overlay = clonedDoc.querySelector('.upload-overlay');
+                            if (overlay) overlay.style.display = 'none';
+
+                            clonedDoc.querySelectorAll('.meta-delete-btn, .meta-add-btn').forEach(el => el.style.display = 'none');
+                            clonedDoc.querySelectorAll('.meta-row').forEach(el => el.style.gridTemplateColumns = '42mm 1fr');
+                        }
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'landscape',
+                        compress: true
+                    }
+                };
+
+                await html2pdf().set(opt).from(cert).save();
+            } catch (err) {
+                console.error('PDF export failed:', err);
+                alert('PDF export failed: ' + err.message);
+            } finally {
+                // 3. Restore all original styles
+                html.style.width = originalHtmlStyle.width;
+                html.style.height = originalHtmlStyle.height;
+                html.style.margin = originalHtmlStyle.margin;
+                html.style.overflow = originalHtmlStyle.overflow;
+
+                body.style.display = originalBodyStyle.display;
+                body.style.width = originalBodyStyle.width;
+                body.style.height = originalBodyStyle.height;
+                body.style.margin = originalBodyStyle.margin;
+                body.style.padding = originalBodyStyle.padding;
+                body.style.overflow = originalBodyStyle.overflow;
+
+                cert.style.position = originalCertStyle.position;
+                cert.style.top = originalCertStyle.top;
+                cert.style.left = originalCertStyle.left;
+                cert.style.transform = originalCertStyle.transform;
+                cert.style.boxShadow = originalCertStyle.boxShadow;
+
+                btn.style.visibility = 'visible';
+                btn.disabled = false;
+                btnLabel.textContent = original;
+            }
+        }
+    </script>
 </body>
+
 </html>
