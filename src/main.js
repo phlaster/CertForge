@@ -698,9 +698,8 @@ async function exportPDF() {
                         if (clonedArtist) {
                             const isPlaceholder = clonedArtist.classList.contains('placeholder-text');
                             const currentText = (clonedArtist.innerText || '').trim();
-                            const placeholderText = clonedArtist.getAttribute('data-placeholder') || '';
 
-                            if (!isPlaceholder && currentText !== '' && currentText !== placeholderText) {
+                            if (!isPlaceholder && currentText !== '') {
                                 isEmpty = false;
                             }
                         }
