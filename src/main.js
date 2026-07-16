@@ -78,6 +78,27 @@ function generatePaperTexture() {
 generatePaperTexture();
 
 // ============================================================
+//  RESPONSIVE CERTIFICATE SCALING (Gradual)
+// ============================================================
+function updateCertScale() {
+    const cert = document.getElementById('certificate');
+    if (!cert) return;
+    
+    // Convert 297mm to pixels (1mm = 96/25.4 px) and add 7% margin
+    const targetWidthPx = 297 * 1.07 * (96 / 25.4);
+    let scale = window.innerWidth / targetWidthPx;
+    
+    // Clamp scale smoothly between 0.4 and 1.2
+    scale = Math.max(0.4, Math.min(1.2, scale));
+    
+    cert.style.setProperty('--scale', scale);
+}
+
+// Update scale on resize and on initial load
+window.addEventListener('resize', updateCertScale);
+updateCertScale();
+
+// ============================================================
 //  TEXTURE TOGGLE LOGIC
 // ============================================================
 const textureCheck = document.getElementById('textureCheck');
@@ -550,7 +571,9 @@ async function exportPDF() {
         top: cert.style.top,
         left: cert.style.left,
         transform: cert.style.transform,
-        boxShadow: cert.style.boxShadow
+        boxShadow: cert.style.boxShadow,
+        zoom: cert.style.zoom,
+        margin: cert.style.margin
     };
 
     // 2. Force the live document to perfectly wrap the certificate to prevent scroll/offset calculations
@@ -568,6 +591,8 @@ async function exportPDF() {
     cert.style.left = '0';
     cert.style.transform = 'none';
     cert.style.boxShadow = 'none';
+    cert.style.zoom = 1;
+    cert.style.margin = '0';
 
     // Trigger reflow to calculate exact unscaled pixel dimensions
     void cert.offsetWidth;
@@ -891,6 +916,8 @@ async function exportPDF() {
         cert.style.left = originalCertStyle.left;
         cert.style.transform = originalCertStyle.transform;
         cert.style.boxShadow = originalCertStyle.boxShadow;
+        cert.style.zoom = originalCertStyle.zoom;
+        cert.style.margin = originalCertStyle.margin;
 
         if (qrLinkWrapper && qrWrapEl) {
             qrLinkWrapper.parentNode.insertBefore(qrWrapEl, qrLinkWrapper);
