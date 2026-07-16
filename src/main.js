@@ -83,14 +83,14 @@ generatePaperTexture();
 function updateCertScale() {
     const cert = document.getElementById('certificate');
     if (!cert) return;
-    
+
     // Convert 297mm to pixels (1mm = 96/25.4 px) and add 7% margin
     const targetWidthPx = 297 * 1.07 * (96 / 25.4);
     let scale = window.innerWidth / targetWidthPx;
-    
+
     // Clamp scale smoothly between 0.4 and 1.2
     scale = Math.max(0.4, Math.min(1.2, scale));
-    
+
     cert.style.setProperty('--scale', scale);
 }
 
@@ -380,7 +380,7 @@ fileInput.addEventListener('change', async (e) => {
     if (!file) return;
 
     const isHeic = file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-    
+
     if (isHeic) {
         const heic2any = (await import('heic2any')).default;
         imageLoader.style.display = 'flex'; // Show loading spinner
@@ -451,28 +451,28 @@ const qrContainer = document.getElementById('qrcode');
 const qrModalOverlay = document.getElementById('qrModalOverlay');
 const qrUrlInput = document.getElementById('qrUrlInput');
 
-        async function generateQR(url) {
-            const QRCode = (await import('qrcode')).default;
-            qrContainer.innerHTML = '';
-            const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-dark').trim() || '#4a4a4a';
-            
-            // Create a canvas element for the QR code
-            const canvas = document.createElement('canvas');
-            
-            try {
-                await QRCode.toCanvas(canvas, url, {
-                    width: 200,
-                    margin: 1,
-                    color: {
-                        dark: darkColor,
-                        light: "#ffffff"
-                    }
-                });
-                qrContainer.appendChild(canvas);
-            } catch (err) {
-                console.error('QR Code generation failed:', err);
+async function generateQR(url) {
+    const QRCode = (await import('qrcode')).default;
+    qrContainer.innerHTML = '';
+    const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-dark').trim() || '#4a4a4a';
+
+    // Create a canvas element for the QR code
+    const canvas = document.createElement('canvas');
+
+    try {
+        await QRCode.toCanvas(canvas, url, {
+            width: 200,
+            margin: 1,
+            color: {
+                dark: darkColor,
+                light: "#ffffff"
             }
-        }
+        });
+        qrContainer.appendChild(canvas);
+    } catch (err) {
+        console.error('QR Code generation failed:', err);
+    }
+}
 
 function openQRModal() {
     qrUrlInput.value = currentQRUrl;
@@ -564,7 +564,7 @@ async function exportPDF() {
         margin: body.style.margin,
         padding: body.style.padding,
         overflow: body.style.overflow,
-        zoom: body.style.zoom 
+        zoom: body.style.zoom
     };
     const originalCertStyle = {
         position: cert.style.position,
@@ -791,20 +791,20 @@ async function exportPDF() {
         // Instead of just saving, we intercept the jsPDF object to add an invisible text layer
         await html2pdf().set(opt).from(cert).toPdf().get('pdf').then((pdf) => {
             const certRect = cert.getBoundingClientRect();
-            
+
             // Iterate over all editable text elements in the live DOM
             document.querySelectorAll('[contenteditable="true"]').forEach(el => {
                 if (!el.offsetParent) return; // Skip if hidden
                 if (el.classList.contains('placeholder-text')) return;
-                
+
                 // Skip the artist name if the by-line is marked as empty
                 if (el.classList.contains('artist') && el.closest('.by-line.empty-artist')) return;
-                
+
                 const text = el.innerText.trim().replace(/\n/g, ' ');
                 if (!text) return;
 
                 const rect = el.getBoundingClientRect();
-                
+
                 // Calculate position and size relative to the certificate dimensions
                 const xPx = rect.left - certRect.left;
                 const yPx = rect.top - certRect.top;
@@ -819,16 +819,18 @@ async function exportPDF() {
                 // jsPDF places text by its baseline, so we offset roughly 75% down the height
                 const yBaseline = yMm + hMm * 0.75;
                 // Convert mm to points for font size (1mm = 2.834645669 points)
-                const fontSizePt = hMm * 2.834645669 * 0.85; 
+                const fontSizePt = hMm * 2.834645669 * 0.85;
 
                 pdf.setFontSize(fontSizePt);
-                
+
                 // Set text rendering state to fully transparent
                 try {
-                    pdf.setGState(pdf.GState({ opacity: 0 }));
+                    pdf.setGState(pdf.GState({
+                        opacity: 0
+                    }));
                 } catch (e) {
                     // Fallback for older jsPDF versions if GState fails
-                    pdf.setTextColor(255, 255, 255); 
+                    pdf.setTextColor(255, 255, 255);
                 }
 
                 // Match the CSS text alignment
@@ -854,7 +856,7 @@ async function exportPDF() {
             const qrWrapEl = document.getElementById('qrWrap');
             if (qrWrapEl && currentQRUrl) {
                 const rect = qrWrapEl.getBoundingClientRect();
-                
+
                 const xPx = rect.left - certRect.left;
                 const yPx = rect.top - certRect.top;
                 const wPx = rect.width;
@@ -869,12 +871,14 @@ async function exportPDF() {
                 const fontSizePt = 3; // Very small font size to prevent wrapping
 
                 pdf.setFontSize(fontSizePt);
-                
+
                 // Ensure text is fully transparent
                 try {
-                    pdf.setGState(pdf.GState({ opacity: 0 }));
+                    pdf.setGState(pdf.GState({
+                        opacity: 0
+                    }));
                 } catch (e) {
-                    pdf.setTextColor(255, 255, 255); 
+                    pdf.setTextColor(255, 255, 255);
                 }
 
                 // Add invisible text with a hyperlink over the QR code
@@ -886,7 +890,9 @@ async function exportPDF() {
 
             // Reset graphics state just in case
             try {
-                pdf.setGState(pdf.GState({ opacity: 1 }));
+                pdf.setGState(pdf.GState({
+                    opacity: 1
+                }));
             } catch (e) {
                 pdf.setTextColor(0, 0, 0);
             }

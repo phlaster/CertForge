@@ -237,7 +237,7 @@ input:checked+.slider:before {
     flex-shrink: 0;
     transition: background-color 0.5s ease;
 
-    --scale: 1; /* Dynamically updated by JS */
+    --scale: 1;
     zoom: var(--scale);
     margin: auto;
 }
@@ -1070,7 +1070,7 @@ input:checked+.slider:before {
     .top-bar {
         display: none !important;
     }
-    
+
     .gh-btn {
         display: none !important;
     }
