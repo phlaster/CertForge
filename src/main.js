@@ -678,9 +678,6 @@ async function exportPDF() {
 
                     clonedDoc.querySelectorAll('.frame-outer').forEach(el => el.style.borderColor = frameMidColor);
                     clonedDoc.querySelectorAll('.frame-inner').forEach(el => el.style.borderColor = frameLightColor);
-                    clonedDoc.querySelectorAll('.orn-line').forEach(el => el.style.backgroundColor = frameMidColor);
-                    clonedDoc.querySelectorAll('.orn-circle-outer').forEach(el => el.style.borderColor = frameMidColor);
-                    clonedDoc.querySelectorAll('.orn-circle-inner').forEach(el => el.style.backgroundColor = frameMidColor);
                     clonedDoc.querySelectorAll('.header-divider .line').forEach(el => el.style.backgroundColor = frameMidColor);
                     clonedDoc.querySelectorAll('.header-divider .diamond').forEach(el => el.style.backgroundColor = frameMidColor);
                     clonedDoc.querySelectorAll('.sign-line').forEach(el => el.style.borderColor = frameMidColor);
