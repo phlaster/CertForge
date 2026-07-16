@@ -265,11 +265,13 @@ input:checked+.slider:before {
 /* Frame */
 .frame-outer {
     position: absolute;
-    top: 6mm;
-    right: 6mm;
-    bottom: 6mm;
-    left: 6mm;
+    top: 4mm;
+    right: 4mm;
+    bottom: 4mm;
+    left: 4mm;
     border: 1px solid var(--frame-mid);
+    border-radius: 8mm;
+    /* Rounded outer frame */
     pointer-events: none;
     z-index: 2;
     transition: border-color 0.5s ease;
@@ -277,183 +279,50 @@ input:checked+.slider:before {
 
 .frame-inner {
     position: absolute;
-    top: 9mm;
-    right: 9mm;
-    bottom: 9mm;
-    left: 9mm;
+    top: 5mm;
+    right: 5mm;
+    bottom: 5mm;
+    left: 5mm;
     border: 0.5px solid var(--frame-light);
+    border-radius: 2mm;
+    /* Rounded inner frame */
     pointer-events: none;
     z-index: 2;
     transition: border-color 0.5s ease;
 }
 
-/* ─── Corner Ornaments (Pure CSS) ───────────────────────── */
+/* ─── Corner Dots (Pure CSS) ───────────────────────── */
 .corner {
     position: absolute;
-    width: 14mm;
-    height: 14mm;
-    z-index: 3;
-    pointer-events: none;
-}
-
-.corner-tl {
-    top: 4mm;
-    left: 4mm;
-}
-
-.corner-tr {
-    top: 4mm;
-    right: 4mm;
-}
-
-.corner-bl {
-    bottom: 4mm;
-    left: 4mm;
-}
-
-.corner-br {
-    bottom: 4mm;
-    right: 4mm;
-}
-
-.arch {
-    position: absolute;
-    border-color: var(--frame-mid);
-    border-style: solid;
-    border-width: 0;
-    transition: border-color 0.5s ease;
-}
-
-.arch.outer {
-    width: 7.7mm;
-    height: 7.7mm;
-}
-
-.arch.inner {
-    width: 5.25mm;
-    height: 5.25mm;
-}
-
-.dot {
-    position: absolute;
-    width: 0.8mm;
-    height: 0.8mm;
+    width: 5px;
+    height: 5px;
     background-color: var(--frame-mid);
     border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
     transition: background-color 0.5s ease;
 }
 
-.corner-tl .arch.outer {
-    top: 0;
-    left: 0;
-    border-width: 1px 0 0 1px;
-    border-top-left-radius: 7.7mm;
+.corner-tl {
+    top: calc(4.5mm - 2.5px);
+    left: calc(4.5mm - 2.5px);
 }
 
-.corner-tl .arch.inner {
-    top: 2.45mm;
-    left: 2.45mm;
-    border-width: 0.5px 0 0 0.5px;
-    border-top-left-radius: 5.25mm;
+.corner-tr {
+    top: calc(4.5mm - 2.5px);
+    right: calc(4.5mm - 2.5px);
 }
 
-.corner-tl .dot1 {
-    top: 0;
-    left: 7.7mm;
-    margin-top: -0.4mm;
-    margin-left: -0.4mm;
+.corner-bl {
+    bottom: calc(4.5mm - 2.5px);
+    left: calc(4.5mm - 2.5px);
 }
 
-.corner-tl .dot2 {
-    top: 7.7mm;
-    left: 0;
-    margin-top: -0.4mm;
-    margin-left: -0.4mm;
+.corner-br {
+    bottom: calc(4.5mm - 2.5px);
+    right: calc(4.5mm - 2.5px);
 }
 
-.corner-tr .arch.outer {
-    top: 0;
-    right: 0;
-    border-width: 1px 1px 0 0;
-    border-top-right-radius: 7.7mm;
-}
-
-.corner-tr .arch.inner {
-    top: 2.45mm;
-    right: 2.45mm;
-    border-width: 0.5px 0.5px 0 0;
-    border-top-right-radius: 5.25mm;
-}
-
-.corner-tr .dot1 {
-    top: 0;
-    right: 7.7mm;
-    margin-top: -0.4mm;
-    margin-right: -0.4mm;
-}
-
-.corner-tr .dot2 {
-    top: 7.7mm;
-    right: 0;
-    margin-top: -0.4mm;
-    margin-right: -0.4mm;
-}
-
-.corner-bl .arch.outer {
-    bottom: 0;
-    left: 0;
-    border-width: 0 0 1px 1px;
-    border-bottom-left-radius: 7.7mm;
-}
-
-.corner-bl .arch.inner {
-    bottom: 2.45mm;
-    left: 2.45mm;
-    border-width: 0 0 0.5px 0.5px;
-    border-bottom-left-radius: 5.25mm;
-}
-
-.corner-bl .dot1 {
-    bottom: 0;
-    left: 7.7mm;
-    margin-bottom: -0.4mm;
-    margin-left: -0.4mm;
-}
-
-.corner-bl .dot2 {
-    bottom: 7.7mm;
-    left: 0;
-    margin-bottom: -0.4mm;
-    margin-left: -0.4mm;
-}
-
-.corner-br .arch.outer {
-    bottom: 0;
-    right: 0;
-    border-width: 0 1px 1px 0;
-    border-bottom-right-radius: 7.7mm;
-}
-
-.corner-br .arch.inner {
-    bottom: 2.45mm;
-    right: 2.45mm;
-    border-width: 0 0.5px 0.5px 0;
-    border-bottom-right-radius: 5.25mm;
-}
-
-.corner-br .dot1 {
-    bottom: 0;
-    right: 7.7mm;
-    margin-bottom: -0.4mm;
-    margin-right: -0.4mm;
-}
-
-.corner-br .dot2 {
-    bottom: 7.7mm;
-    right: 0;
-    margin-bottom: -0.4mm;
-    margin-right: -0.4mm;
-}
 
 /* ─── Inner content ─────────────────────────────────────── */
 .certificate__inner {
@@ -506,8 +375,9 @@ input:checked+.slider:before {
     width: 5px;
     height: 5px;
     background: var(--frame-mid);
-    transform: rotate(45deg);
+    border-radius: 50%;
     transition: background-color 0.5s ease;
+    flex-shrink: 0;
 }
 
 /* ─── Body Grid ─────────────────────────────────────────── */
