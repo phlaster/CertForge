@@ -493,8 +493,8 @@ input:checked+.slider:before {
 }
 
 .header-divider .line {
-    width: 60px;
-    height: 1px;
+    width: 200px;
+    height: 0.8px;
     background: var(--frame-mid);
     transition: background-color 0.5s ease;
 }
