@@ -163,7 +163,6 @@ input:checked+.slider:before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    /* Centers button content */
     gap: 10px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
     border-radius: 12px;
@@ -382,7 +381,7 @@ input:checked+.slider:before {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 10mm; 
-    grid-template-rows: 1fr auto 1fr; /* Equal space top and bottom forces center row to the exact middle */
+    grid-template-rows: 1fr auto 1fr;
     min-height: 0;
 }
 

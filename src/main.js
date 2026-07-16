@@ -27,23 +27,17 @@ function generatePaperTexture() {
     };
 
     ctx.clearRect(0, 0, size, size);
-
-    // Enable browser's bilinear interpolation to smooth out the noise naturally
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-
-    // Apply a slight blur to all layers to ensure it looks like soft paper grain
     ctx.filter = 'blur(1.5px)';
 
-    // Vary octaves on each switch (3 to 5 layers of detail)
     const octaves = 1 + Math.floor(Math.random() * 5);
-    const baseFreq = 100; // Starting frequency
+    const baseFreq = 100;
 
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
 
     for (let o = 0; o < octaves; o++) {
-        // Double the frequency (detail) for each octave
         const freq = baseFreq * Math.pow(2, o);
         tempCanvas.width = freq;
         tempCanvas.height = freq;
@@ -53,7 +47,6 @@ function generatePaperTexture() {
 
         const octaveAlpha = 0.2; //(0.5 / octaves) * (1 - (0.1 * o)); // Higher frequencies get slightly less opacity so the fine grain doesn't overpower
 
-        // Generate pure random pixel noise at this frequency
         for (let i = 0; i < d.length; i += 4) {
             const val = Math.random();
             d[i] = rgb.r;
@@ -63,8 +56,6 @@ function generatePaperTexture() {
         }
         tempCtx.putImageData(imgData, 0, 0);
 
-        // Draw the small noise canvas onto the 1024px main canvas.
-        // The browser interpolates and smooths it automatically, removing all blocky edges.
         ctx.drawImage(tempCanvas, 0, 0, freq, freq, 0, 0, size, size);
     }
 
@@ -87,10 +78,7 @@ function updateCertScale() {
     // Convert 297mm to pixels (1mm = 96/25.4 px) and add 7% margin
     const targetWidthPx = 297 * 1.07 * (96 / 25.4);
     let scale = window.innerWidth / targetWidthPx;
-
-    // Clamp scale smoothly between 0.4 and 1.2
     scale = Math.max(0.4, Math.min(1.2, scale));
-
     cert.style.setProperty('--scale', scale);
 }
 
@@ -347,10 +335,8 @@ function addMetaRow() {
 
     metaList.appendChild(row);
 
-    // Apply placeholder behavior to new elements
     applyPlaceholderBehavior(dt);
     applyPlaceholderBehavior(dd);
-
     updateMetaAddBtn();
 }
 
@@ -455,8 +441,6 @@ async function generateQR(url) {
     const QRCode = (await import('qrcode')).default;
     qrContainer.innerHTML = '';
     const darkColor = getComputedStyle(document.documentElement).getPropertyValue('--frame-dark').trim() || '#4a4a4a';
-
-    // Create a canvas element for the QR code
     const canvas = document.createElement('canvas');
 
     try {
@@ -535,7 +519,6 @@ async function exportPDF() {
     btn.disabled = true;
     btnLabel.textContent = 'Loading…';
 
-    // Dynamically load the library
     const html2pdf = (await import('html2pdf.js')).default;
 
     btnLabel.textContent = 'Preparing…';
@@ -550,7 +533,6 @@ async function exportPDF() {
     const body = document.body;
     const cert = document.getElementById('certificate');
 
-    // 1. Save all original states to restore them later
     const originalHtmlStyle = {
         width: html.style.width,
         height: html.style.height,
@@ -576,7 +558,6 @@ async function exportPDF() {
         margin: cert.style.margin
     };
 
-    // 2. Force the live document to perfectly wrap the certificate to prevent scroll/offset calculations
     html.style.margin = '0';
     html.style.overflow = 'hidden';
 
@@ -594,19 +575,16 @@ async function exportPDF() {
     cert.style.zoom = 1;
     cert.style.margin = '0';
 
-    // Trigger reflow to calculate exact unscaled pixel dimensions
     void cert.offsetWidth;
 
     const certWidth = cert.offsetWidth;
     const certHeight = cert.offsetHeight;
 
-    // Lock the HTML and Body to the exact certificate dimensions
     html.style.width = certWidth + 'px';
     html.style.height = certHeight + 'px';
     body.style.width = certWidth + 'px';
     body.style.height = certHeight + 'px';
 
-    // Wrap QR code in hyperlink for clickable PDF link
     const qrWrapEl = document.getElementById('qrWrap');
     let qrLinkWrapper = null;
     if (qrWrapEl && currentQRUrl) {
@@ -623,7 +601,6 @@ async function exportPDF() {
         await waitForQR();
         await new Promise(r => setTimeout(r, 300));
 
-        // Resolve all CSS variables into solid color strings
         const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-cert').trim();
         const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
         const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
@@ -788,16 +765,13 @@ async function exportPDF() {
             }
         };
 
-        // Instead of just saving, we intercept the jsPDF object to add an invisible text layer
         await html2pdf().set(opt).from(cert).toPdf().get('pdf').then((pdf) => {
             const certRect = cert.getBoundingClientRect();
 
-            // Iterate over all editable text elements in the live DOM
             document.querySelectorAll('[contenteditable="true"]').forEach(el => {
                 if (!el.offsetParent) return; // Skip if hidden
                 if (el.classList.contains('placeholder-text')) return;
 
-                // Skip the artist name if the by-line is marked as empty
                 if (el.classList.contains('artist') && el.closest('.by-line.empty-artist')) return;
 
                 const text = el.innerText.trim().replace(/\n/g, ' ');
@@ -805,7 +779,6 @@ async function exportPDF() {
 
                 const rect = el.getBoundingClientRect();
 
-                // Calculate position and size relative to the certificate dimensions
                 const xPx = rect.left - certRect.left;
                 const yPx = rect.top - certRect.top;
                 const wPx = rect.width;
@@ -823,17 +796,14 @@ async function exportPDF() {
 
                 pdf.setFontSize(fontSizePt);
 
-                // Set text rendering state to fully transparent
                 try {
                     pdf.setGState(pdf.GState({
                         opacity: 0
                     }));
                 } catch (e) {
-                    // Fallback for older jsPDF versions if GState fails
                     pdf.setTextColor(255, 255, 255);
                 }
 
-                // Match the CSS text alignment
                 const textAlign = window.getComputedStyle(el).textAlign;
                 let align = 'left';
                 let x = xMm;
@@ -845,14 +815,12 @@ async function exportPDF() {
                     x = xMm + wMm;
                 }
 
-                // Add the invisible text overlay
                 pdf.text(text, x, yBaseline, {
                     maxWidth: wMm,
                     align: align
                 });
             });
 
-            // Add invisible clickable text link over the QR code
             const qrWrapEl = document.getElementById('qrWrap');
             if (qrWrapEl && currentQRUrl) {
                 const rect = qrWrapEl.getBoundingClientRect();
@@ -867,12 +835,11 @@ async function exportPDF() {
                 const wMm = (wPx / certRect.width) * 297;
                 const hMm = (hPx / certRect.height) * 210;
 
-                const yBaseline = yMm + hMm * 0.99; // Position near the bottom
-                const fontSizePt = 3; // Very small font size to prevent wrapping
+                const yBaseline = yMm + hMm * 0.99;
+                const fontSizePt = 3;
 
                 pdf.setFontSize(fontSizePt);
 
-                // Ensure text is fully transparent
                 try {
                     pdf.setGState(pdf.GState({
                         opacity: 0
@@ -881,14 +848,11 @@ async function exportPDF() {
                     pdf.setTextColor(255, 255, 255);
                 }
 
-                // Add invisible text with a hyperlink over the QR code
                 pdf.textWithLink(currentQRUrl, xMm + wMm / 2, yBaseline, {
                     align: 'center',
                     url: currentQRUrl
                 });
             }
-
-            // Reset graphics state just in case
             try {
                 pdf.setGState(pdf.GState({
                     opacity: 1
@@ -896,8 +860,6 @@ async function exportPDF() {
             } catch (e) {
                 pdf.setTextColor(0, 0, 0);
             }
-
-            // Finally, save the PDF with the overlaid ghost text
             pdf.save('fine-art-authenticity-certificate.pdf');
         });
     } catch (err) {
@@ -939,29 +901,14 @@ async function exportPDF() {
     }
 }
 
-// ============================================================
-//  EVENT LISTENERS FOR HTML ELEMENTS (Replaces inline onclick)
-// ============================================================
-
-// Export Button
 document.getElementById('exportBtn').addEventListener('click', exportPDF);
-
-// Meta List Add Button
 document.getElementById('metaAddBtn').addEventListener('click', addMetaRow);
-
-// Meta List Delete Buttons (using event delegation since rows can be added dynamically)
 document.getElementById('metaList').addEventListener('click', (e) => {
     if (e.target.matches('.meta-delete-btn')) {
         removeMetaRow(e.target);
     }
 });
-
-// QR Modal Open
 document.getElementById('qrWrap').addEventListener('click', openQRModal);
-
-// QR Modal Buttons
 document.querySelector('[data-action="close-qr"]').addEventListener('click', closeQRModal);
 document.querySelector('[data-action="save-qr"]').addEventListener('click', saveQRLink);
-
-// Clear Image Button
 document.getElementById('clearImageBtn').addEventListener('click', (e) => clearImage(e));
