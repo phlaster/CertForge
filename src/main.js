@@ -843,8 +843,8 @@ async function exportPDF() {
                 const wMm = (wPx / certRect.width) * 297;
                 const hMm = (hPx / certRect.height) * 210;
 
-                const yBaseline = yMm + hMm * 1.1; // Position near the bottom
-                const fontSizePt = 5; // Very small font size to prevent wrapping
+                const yBaseline = yMm + hMm * 0.99; // Position near the bottom
+                const fontSizePt = 3; // Very small font size to prevent wrapping
 
                 pdf.setFontSize(fontSizePt);
                 
