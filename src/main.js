@@ -773,13 +773,14 @@ async function exportPDF() {
             // Iterate over all editable text elements in the live DOM
             document.querySelectorAll('[contenteditable="true"]').forEach(el => {
                 if (!el.offsetParent) return; // Skip if hidden
-                
-                // Exclude only those boxes that were left empty (they get the 'placeholder-text' class)
                 if (el.classList.contains('placeholder-text')) return;
+                
+                // Skip the artist name if the by-line is marked as empty
+                if (el.classList.contains('artist') && el.closest('.by-line.empty-artist')) return;
                 
                 const text = el.innerText.trim().replace(/\n/g, ' ');
                 if (!text) return;
-                
+
                 const rect = el.getBoundingClientRect();
                 
                 // Calculate position and size relative to the certificate dimensions
@@ -826,6 +827,40 @@ async function exportPDF() {
                     align: align
                 });
             });
+
+            // Add invisible clickable text link over the QR code
+            const qrWrapEl = document.getElementById('qrWrap');
+            if (qrWrapEl && currentQRUrl) {
+                const rect = qrWrapEl.getBoundingClientRect();
+                
+                const xPx = rect.left - certRect.left;
+                const yPx = rect.top - certRect.top;
+                const wPx = rect.width;
+                const hPx = rect.height;
+
+                const xMm = (xPx / certRect.width) * 297;
+                const yMm = (yPx / certRect.height) * 210;
+                const wMm = (wPx / certRect.width) * 297;
+                const hMm = (hPx / certRect.height) * 210;
+
+                const yBaseline = yMm + hMm * 1.1; // Position near the bottom
+                const fontSizePt = 5; // Very small font size to prevent wrapping
+
+                pdf.setFontSize(fontSizePt);
+                
+                // Ensure text is fully transparent
+                try {
+                    pdf.setGState(pdf.GState({ opacity: 0 }));
+                } catch (e) {
+                    pdf.setTextColor(255, 255, 255); 
+                }
+
+                // Add invisible text with a hyperlink over the QR code
+                pdf.textWithLink(currentQRUrl, xMm + wMm / 2, yBaseline, {
+                    align: 'center',
+                    url: currentQRUrl
+                });
+            }
 
             // Reset graphics state just in case
             try {
