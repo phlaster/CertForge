@@ -440,7 +440,7 @@ const qrUrlInput = document.getElementById('qrUrlInput');
             
             try {
                 await QRCode.toCanvas(canvas, url, {
-                    width: 120,
+                    width: 200,
                     margin: 1,
                     color: {
                         dark: darkColor,
@@ -612,10 +612,10 @@ async function exportPDF() {
             filename: 'fine-art-authenticity-certificate.pdf',
             image: {
                 type: 'jpeg',
-                quality: 0.98
+                quality: 0.85
             },
             html2canvas: {
-                scale: 3,
+                scale: 6,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: bgColor,
@@ -767,7 +767,77 @@ async function exportPDF() {
             }
         };
 
-        await html2pdf().set(opt).from(cert).save();
+        // Instead of just saving, we intercept the jsPDF object to add an invisible text layer
+        await html2pdf().set(opt).from(cert).toPdf().get('pdf').then((pdf) => {
+            const certRect = cert.getBoundingClientRect();
+            
+            // Iterate over all editable text elements in the live DOM
+            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                if (!el.offsetParent) return; // Skip if hidden
+                
+                // Exclude only those boxes that were left empty (they get the 'placeholder-text' class)
+                if (el.classList.contains('placeholder-text')) return;
+                
+                const text = el.innerText.trim().replace(/\n/g, ' ');
+                if (!text) return;
+                
+                const rect = el.getBoundingClientRect();
+                
+                // Calculate position and size relative to the certificate dimensions
+                const xPx = rect.left - certRect.left;
+                const yPx = rect.top - certRect.top;
+                const wPx = rect.width;
+                const hPx = rect.height;
+
+                const xMm = (xPx / certRect.width) * 297;
+                const yMm = (yPx / certRect.height) * 210;
+                const wMm = (wPx / certRect.width) * 297;
+                const hMm = (hPx / certRect.height) * 210;
+
+                // jsPDF places text by its baseline, so we offset roughly 75% down the height
+                const yBaseline = yMm + hMm * 0.75;
+                // Convert mm to points for font size (1mm = 2.834645669 points)
+                const fontSizePt = hMm * 2.834645669 * 0.85; 
+
+                pdf.setFontSize(fontSizePt);
+                
+                // Set text rendering state to fully transparent
+                try {
+                    pdf.setGState(pdf.GState({ opacity: 0 }));
+                } catch (e) {
+                    // Fallback for older jsPDF versions if GState fails
+                    pdf.setTextColor(255, 255, 255); 
+                }
+
+                // Match the CSS text alignment
+                const textAlign = window.getComputedStyle(el).textAlign;
+                let align = 'left';
+                let x = xMm;
+                if (textAlign === 'center') {
+                    align = 'center';
+                    x = xMm + wMm / 2;
+                } else if (textAlign === 'right') {
+                    align = 'right';
+                    x = xMm + wMm;
+                }
+
+                // Add the invisible text overlay
+                pdf.text(text, x, yBaseline, {
+                    maxWidth: wMm,
+                    align: align
+                });
+            });
+
+            // Reset graphics state just in case
+            try {
+                pdf.setGState(pdf.GState({ opacity: 1 }));
+            } catch (e) {
+                pdf.setTextColor(0, 0, 0);
+            }
+
+            // Finally, save the PDF with the overlaid ghost text
+            pdf.save('fine-art-authenticity-certificate.pdf');
+        });
     } catch (err) {
         console.error('PDF export failed:', err);
         alert('PDF export failed: ' + err.message);
